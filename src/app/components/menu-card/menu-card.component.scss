@@ -1,0 +1,32 @@
+ion-card {
+  margin: 2em;
+  &:not(.background) {
+    --background: var(--ion-color-primary);
+  }
+  ion-card-title {
+    margin-top: 0px;
+  }
+  ion-card-header {
+    &:not(.header) {
+      color: var(--ion-color-light);
+    }
+    ion-icon {
+      &.has-label {
+        margin: 0 2rem 0 0;
+      }
+      font-size: 3em;
+    }
+    ion-card-title {
+      &:not(.header) {
+        color: var(--ion-color-light);
+      }
+    }
+  }
+}
+
+ion-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}

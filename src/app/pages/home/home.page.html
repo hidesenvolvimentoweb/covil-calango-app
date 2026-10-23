@@ -1,0 +1,40 @@
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" class="text-center pt-2">
+        Bem vindo, <strong>{{ usuario.nome }}!</strong>
+      </ion-col>
+      <ion-col size="12" class="text-center">
+        O número da sua comanda é <strong>{{ usuario.comanda.numero }}</strong>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <app-ygo-menu-card icon="fast-food-outline" label="Cardápio Digital" (click)="toRoute('/cardapio')"></app-ygo-menu-card>
+  <app-ygo-menu-card icon="timer-outline" label="Meus Pedidos" (click)="toRoute('/meus-pedidos')"></app-ygo-menu-card>
+  <app-ygo-menu-card icon="podium" label="Dados da Liga" (click)="toRoute('/dados-liga')"></app-ygo-menu-card>
+  <ion-row>
+    <ion-col [size]="isVisitante() ? 12 : 6" class="text-center">
+      <app-ygo-menu-card icon="trophy-outline" (click)="toRoute('/meus-torneios')"></app-ygo-menu-card>
+    </ion-col>
+    <ion-col size="6" class="text-center" *ngIf="!isVisitante()">
+      <app-ygo-menu-card icon="person-outline" (click)="toRoute('/perfil')"></app-ygo-menu-card>
+    </ion-col>
+  </ion-row>
+  <ion-card *ngIf="listProximosTorneios.length > 0">
+    <ion-card-header class="text-center">
+      <ion-card-title>Próximos Torneios</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-accordion-group>
+        <app-ygo-accordion-torneio *ngFor="let torneio of listProximosTorneios" [torneio]="torneio"></app-ygo-accordion-torneio>
+      </ion-accordion-group>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="!listProximosTorneios.length">
+    <ion-card-header class="text-center">
+      <ion-card-title>Não há nenhum evento próximo!</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+  
+  
+</ion-content>
