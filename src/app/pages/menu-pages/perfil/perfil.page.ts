@@ -48,8 +48,8 @@ export class PerfilPage extends GenericClass {
   async openModalPerfil() {
     (await this.modalController.create({
       component: ModalEditarPerfilPage,
-      breakpoints: [0.5, 1],
-      initialBreakpoint: 0.5
+      breakpoints: [0.8, 1],
+      initialBreakpoint: 0.8
     })).present();
   }
 
@@ -57,8 +57,8 @@ export class PerfilPage extends GenericClass {
     this.parametrosService.getByName(PARAMETRO_REGRA_PERMANENCIA).subscribe(async res => {
       this.modalAberto  = await this.modalController.create({
         component: ModalInformacoesPage,
-        breakpoints: [0.5, 1],
-        initialBreakpoint: 0.5,
+        breakpoints: [0.8, 1],
+        initialBreakpoint: 0.8,
         componentProps: {
           title: 'Regras de Permanência',
           content: res.descricao
@@ -72,8 +72,8 @@ export class PerfilPage extends GenericClass {
     this.parametrosService.getByName(PARAMETRO_INFORMACOES_CALANGO).subscribe(async res => {
       this.modalAberto = await this.modalController.create({
         component: ModalInformacoesPage,
-        breakpoints: [0.5, 1],
-        initialBreakpoint: 0.5,
+        breakpoints: [0.8, 1],
+        initialBreakpoint: 0.8,
         componentProps: {
           title: 'Sobre a Covil',
           content: res.descricao

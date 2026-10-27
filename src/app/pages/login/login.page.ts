@@ -26,8 +26,8 @@ export class LoginPage extends GenericClass {
   async openModalInformarNome() {
     (await this.modalController.create({
       component: ModalInformarNomePage,
-      breakpoints: [0.5],
-      initialBreakpoint: 0.5,
+      breakpoints: [0.8],
+      initialBreakpoint: 0.8,
     })).present();
   }
 }

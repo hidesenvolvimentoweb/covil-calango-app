@@ -21,10 +21,6 @@ export class HomePage extends GenericClass implements OnInit {
     super(injector);
   }
 
-  isVisitante() {
-    return this.usuario.id === 1;
-  }
-
   ngOnInit(): void {
     this.usuario = this.storageService.get(KEY_USUARIO) as JogadorDTO;
   }

@@ -64,8 +64,8 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
   async openModalConfirmarPedido(produto: ProdutoDTO) {
     (await this.modalController.create({
       component: ModalConfirmarPedidoPage,
-      breakpoints: [0.5],
-      initialBreakpoint: 0.5,
+      breakpoints: [0.8],
+      initialBreakpoint: 0.8,
       componentProps: { produto }
     })).present();
   }

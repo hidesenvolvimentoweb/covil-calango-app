@@ -1,5 +1,5 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom">
+  <ion-tab-bar slot="bottom" [style.display]="showTabs ? null : 'none'">
     <ion-tab-button
       tab="home"
       routerLink="/home"
