@@ -1,20 +1,235 @@
-ion-button {
-  margin: 1em;
+:host {
+  --menu-background: #faf9f7;
+  --menu-ink: #292621;
+  --menu-muted: #8c8983;
+  --menu-olive: #526342;
+  --menu-green: #78bd49;
+  --menu-green-dark: #4c7134;
+  --menu-cream: #edf2e8;
 }
 
-.valor-produto {
-  position: fixed;
-  top: 7.87em;
-  padding: 0.4em;
-  right: 0;
-  color: white;
-  background-color: var(--ion-color-primary);
-  font-size: x-large;
-  border: 1px solid var(--ion-color-primary);
-  border-radius: 0.5em 0em 0em 0.5em;;
+.menu-content {
+  --background: var(--menu-background);
 }
 
-img {
-  width: 323px;
-  height: 215px;
+.menu-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+  color: var(--menu-ink);
+}
+
+.page-intro {
+  margin-bottom: 1.25rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--menu-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.page-intro h1 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.6rem, 6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.intro-caption {
+  margin: 0.4rem 0 0;
+  color: var(--menu-muted);
+  font-size: 0.9rem;
+}
+
+.search-container {
+  margin: 0 -0.35rem 1rem;
+}
+
+.product-search {
+  --background: #fff;
+  --border-radius: 1rem;
+  --box-shadow: 0 0.35rem 1.2rem rgba(50, 42, 30, 0.045);
+  --color: var(--menu-ink);
+  --icon-color: var(--menu-olive);
+  --placeholder-color: #a7a39c;
+  --placeholder-opacity: 1;
+  padding: 0;
+}
+
+.category-section {
+  margin-bottom: 1.25rem;
+}
+
+.section-title {
+  margin: 0 0 0.75rem;
+  color: var(--menu-ink);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.category-list {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.1rem 0 0.4rem;
+  scrollbar-width: none;
+}
+
+.category-list::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  display: inline-flex;
+  min-height: 2.75rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(82, 99, 66, 0.1);
+  border-radius: 0.9rem;
+  background: #fff;
+  color: #77736c;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.category-chip ion-icon {
+  font-size: 1rem;
+}
+
+.category-chip.selected {
+  border-color: var(--menu-olive);
+  background: var(--menu-olive);
+  color: #fff;
+}
+
+.product-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.product-card {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(41, 38, 33, 0.05);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.product-image-container {
+  position: relative;
+  height: 12.5rem;
+  overflow: hidden;
+  background: var(--menu-cream);
+}
+
+.product-image-container img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-price {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.8rem;
+  background: var(--menu-olive);
+  color: #fff;
+  font-size: 1.05rem;
+  box-shadow: 0 0.2rem 0.65rem rgba(32, 41, 25, 0.2);
+}
+
+.product-card ion-card-header {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.product-card ion-card-title {
+  color: var(--menu-ink);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.product-card ion-card-content {
+  padding: 0 1rem 1rem;
+}
+
+.ingredients-label {
+  margin: 0 0 0.35rem;
+  color: var(--menu-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.ingredients {
+  margin: 0;
+  color: #69665f;
+  font-size: 0.87rem;
+  line-height: 1.5;
+}
+
+.product-card ion-button {
+  margin: 1rem 0 0;
+  --border-radius: 0.9rem;
+  --box-shadow: none;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgba(82, 99, 66, 0.12);
+  border-radius: 1.2rem;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.empty-icon {
+  display: grid;
+  width: 4.25rem;
+  height: 4.25rem;
+  margin-bottom: 0.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--menu-cream);
+  color: var(--menu-green-dark);
+  font-size: 1.8rem;
+}
+
+.empty-state h2 {
+  margin: 0;
+  color: var(--menu-ink);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--menu-muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+@media (min-width: 600px) {
+  .menu-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
 }

@@ -1,0 +1,50 @@
+<app-ygo-header-component [title]="'Minha Comanda'"></app-ygo-header-component>
+
+<ion-content class="account-content">
+  <main class="account-page">
+    <header class="page-intro">
+      <p class="eyebrow">SEU CONSUMO NO COVIL</p>
+      <h1>Minha Comanda</h1>
+      <p class="intro-caption">Confira seus pedidos e o total da sua comanda.</p>
+    </header>
+
+    <section class="account-orders" *ngIf="pedidos.length">
+      <h2 class="section-title">Pedidos e valores</h2>
+      <article class="order-list">
+        <div class="order-item" *ngFor="let pedido of pedidos">
+          <div class="product-icon">
+            <ion-icon name="fast-food-outline" aria-hidden="true"></ion-icon>
+          </div>
+          <div class="product-details">
+            <h3>{{ pedido.produto?.nome }}</h3>
+            <p>{{ pedido.produto?.categoria || 'Produto' }}</p>
+          </div>
+          <span class="product-quantity">{{ pedido.quantidade }}x</span>
+          <strong class="product-total">
+            {{ ((pedido.produto?.valor || 0) * (pedido.quantidade || 0)) | currency: 'BRL' }}
+          </strong>
+        </div>
+      </article>
+    </section>
+
+    <section class="empty-state" *ngIf="!pedidos.length">
+      <div class="empty-icon">
+        <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
+      </div>
+      <h2>Sua comanda está vazia</h2>
+      <p>Seus pedidos aparecerão aqui.</p>
+    </section>
+
+    <section class="summary-card" aria-label="Resumo da comanda">
+      <div class="summary-row">
+        <span>Total dos pedidos</span>
+        <strong>{{ totalComanda | currency: 'BRL' }}</strong>
+      </div>
+    </section>
+
+    <ion-button class="account-action" expand="block" color="primary">
+      Finalizar Comanda
+      <ion-icon slot="end" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+  </main>
+</ion-content>

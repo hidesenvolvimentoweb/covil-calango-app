@@ -1,0 +1,70 @@
+:host {
+  --information-background: #faf9f7;
+  --information-ink: #292621;
+  --information-muted: #77736c;
+  --information-olive: #526342;
+  --information-green-dark: #4c7134;
+  --information-cream: #edf2e8;
+}
+
+.profile-modal-header ion-toolbar {
+  --background: var(--information-olive);
+  --color: #fff;
+  text-align: center;
+}
+
+.profile-modal-content {
+  --background: var(--information-background);
+}
+
+.information-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+  color: var(--information-ink);
+}
+
+.information-icon {
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto 1rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--information-cream);
+  color: var(--information-green-dark);
+  font-size: 2rem;
+}
+
+.information-card {
+  padding: 1.25rem;
+  border: 1px solid rgba(82, 99, 66, 0.1);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--information-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.information-copy {
+  margin: 0;
+  color: #55524c;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  text-align: left;
+  white-space: pre-line;
+}
+
+@media (min-width: 600px) {
+  .information-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
+}

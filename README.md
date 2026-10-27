@@ -25,5 +25,6 @@ A estrutura do projeto segue o padrão típico do Ionic 6 com Angular:
 Esse projeto é um Aplicativo Mobile para ser utilizado pelos clientes da Covil do Calango, uma loja Geek de board e card games, o principal foco da App é auxiliar no auto-gerenciamento de comandas e pedidos, tendo em vista que a loja também trabalha com alimentação, servindo lanches e produtos para seus clientes.
 Esse aplicativo consome dados da [API da Covil](https://github.com/Liendson/covil-calango-api), feita em Java.
 
-Para gerar o APK, basta rodar o comando do Docker:
+Para gerar o APK, construa a imagem e depois basta rodar o comando do Docker:
+- docker build -t ionic-apk-builder .
 - docker run --rm -v ${PWD}:/app -v ${PWD}/apk:/app/platforms/android/app/build/outputs/apk ionic-apk-builder

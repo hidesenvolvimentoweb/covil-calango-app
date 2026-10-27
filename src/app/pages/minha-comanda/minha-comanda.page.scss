@@ -1,0 +1,222 @@
+:host {
+  --account-background: #faf9f7;
+  --account-ink: #292621;
+  --account-muted: #8c8983;
+  --account-olive: #526342;
+  --account-green-dark: #4c7134;
+  --account-cream: #edf2e8;
+}
+
+.account-content {
+  --background: var(--account-background);
+}
+
+.account-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+  color: var(--account-ink);
+}
+
+.page-intro {
+  margin-bottom: 1.35rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--account-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.page-intro h1 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.6rem, 6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.intro-caption {
+  margin: 0.4rem 0 0;
+  color: var(--account-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.account-orders {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.order-list,
+.summary-card,
+.empty-state {
+  border: 1px solid rgba(82, 99, 66, 0.1);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.order-list {
+  padding: 0.25rem 1rem;
+}
+
+.order-item {
+  display: flex;
+  min-height: 5.2rem;
+  align-items: center;
+  gap: 0.65rem;
+  border-bottom: 1px solid rgba(41, 38, 33, 0.07);
+}
+
+.order-item:last-child {
+  border-bottom: 0;
+}
+
+.product-icon {
+  display: grid;
+  width: 3.35rem;
+  height: 3.35rem;
+  flex: 0 0 3.35rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--account-cream);
+  color: var(--account-green-dark);
+  font-size: 1.4rem;
+}
+
+.product-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.product-details h3 {
+  overflow: hidden;
+  margin: 0;
+  color: var(--account-ink);
+  font-size: 0.87rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-details p {
+  overflow: hidden;
+  margin: 0.25rem 0 0;
+  color: var(--account-muted);
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-quantity {
+  flex: 0 0 auto;
+  color: var(--account-muted);
+  font-size: 0.72rem;
+}
+
+.product-total {
+  flex: 0 0 auto;
+  color: var(--account-ink);
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.summary-card {
+  padding: 1rem;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.summary-row span {
+  color: var(--account-muted);
+  font-size: 0.84rem;
+}
+
+.summary-row strong {
+  color: var(--account-olive);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.account-action {
+  margin: 1rem 0 0;
+  --border-radius: 0.9rem;
+  --box-shadow: none;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+}
+
+.empty-icon {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--account-cream);
+  color: var(--account-green-dark);
+  font-size: 1.8rem;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--account-muted);
+  font-size: 0.84rem;
+}
+
+@media (max-width: 360px) {
+  .account-page {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .order-item {
+    gap: 0.45rem;
+  }
+
+  .product-icon {
+    width: 2.85rem;
+    height: 2.85rem;
+    flex-basis: 2.85rem;
+  }
+
+  .product-total {
+    font-size: 0.82rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .account-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
+}

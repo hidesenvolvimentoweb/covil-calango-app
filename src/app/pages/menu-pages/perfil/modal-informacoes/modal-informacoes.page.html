@@ -1,16 +1,17 @@
-<ion-header class="text-center">
+<ion-header class="profile-modal-header">
   <ion-toolbar>
     <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-grid>
-    <ion-row class="text-center">
-      <ion-col>
-        {{ content }}
-      </ion-col>
-    </ion-row>
-  </ion-grid>
- 
+<ion-content class="profile-modal-content">
+  <main class="information-page">
+    <div class="information-icon">
+      <ion-icon [name]="title === 'Sobre a Covil' ? 'leaf-outline' : 'reader-outline'" aria-hidden="true"></ion-icon>
+    </div>
+    <section class="information-card">
+      <p class="eyebrow">COVIL DO CALANGO</p>
+      <p class="information-copy">{{ content }}</p>
+    </section>
+  </main>
 </ion-content>

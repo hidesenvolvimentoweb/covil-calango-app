@@ -1,3 +1,166 @@
-.btn-confirmar {
-  padding: 0 1em 0em 1em;
+:host {
+  --confirmation-background: #faf9f7;
+  --confirmation-ink: #292621;
+  --confirmation-muted: #8c8983;
+  --confirmation-olive: #526342;
+  --confirmation-green-dark: #4c7134;
+  --confirmation-cream: #edf2e8;
+}
+
+.modal-header ion-toolbar {
+  --background: var(--confirmation-olive);
+  --color: #fff;
+  text-align: center;
+}
+
+.confirmation-content {
+  --background: var(--confirmation-background);
+}
+
+.confirmation-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+  color: var(--confirmation-ink);
+}
+
+.eyebrow,
+.product-label {
+  margin: 0;
+  color: var(--confirmation-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.confirmation-page h1 {
+  margin: 0.45rem 0 1.25rem;
+  font-size: clamp(1.55rem, 6vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.confirmation-card {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(41, 38, 33, 0.05);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.product-image-container {
+  height: 11rem;
+  overflow: hidden;
+  background: var(--confirmation-cream);
+}
+
+.product-image-container img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.confirmation-card ion-card-header {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.confirmation-card ion-card-title {
+  margin-top: 0.35rem;
+  color: var(--confirmation-ink);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.confirmation-card ion-card-content {
+  padding: 0 1rem 1rem;
+}
+
+.quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(41, 38, 33, 0.08);
+}
+
+.quantity-copy {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.quantity-title {
+  color: var(--confirmation-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.quantity-caption {
+  color: var(--confirmation-muted);
+  font-size: 0.75rem;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  padding: 0.15rem;
+  border-radius: 0.9rem;
+  background: var(--confirmation-cream);
+}
+
+.quantity-control ion-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0;
+  --color: var(--confirmation-green-dark);
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.quantity-control ion-button[disabled] {
+  opacity: 0.45;
+}
+
+.quantity-input {
+  width: 2.5rem;
+  min-height: 2.5rem;
+  color: var(--confirmation-ink);
+  font-weight: 700;
+  text-align: center;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  color: var(--confirmation-muted);
+  font-size: 0.9rem;
+}
+
+.total-row strong {
+  color: var(--confirmation-olive);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.confirm-button {
+  margin: 1rem 0 0;
+  --border-radius: 0.9rem;
+  --box-shadow: none;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+@media (min-width: 600px) {
+  .confirmation-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
 }

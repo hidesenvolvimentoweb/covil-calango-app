@@ -1,36 +1,55 @@
 <app-ygo-header-component [title]="'Meus Pedidos'"></app-ygo-header-component>
 
-<ion-content>
-  <ion-col size="12" *ngFor="let pedido of listaMeusPedidos">
-    <ion-card button class="no-margin-top">
-      <ion-card-header>
-        <ion-card-title class="card-title">{{ pedido.produto.nome }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content *ngIf="isPedidoEmAndamento(pedido) || isPedidoSolicitado(pedido)">
-        <ion-card-subtitle>Seu pedido vai estar pronto aproximadamente as</ion-card-subtitle>
-        <div class="flex">
-          <ion-icon name="alarm-outline" class="icon-alarm-outline"></ion-icon>
-          {{ calcularPrazoDoPedido(pedido) | date: 'HH:mm' }}
+<ion-content class="orders-content">
+  <main class="orders-page">
+    <header class="page-intro">
+      <p class="eyebrow">ACOMPANHAMENTO</p>
+      <h1>Acompanhe seus pedidos</h1>
+      <p class="intro-caption">Veja o andamento dos seus pedidos de hoje.</p>
+    </header>
+
+    <section class="orders-list" *ngIf="listaMeusPedidos.length">
+      <ion-card button class="order-card" *ngFor="let pedido of listaMeusPedidos">
+        <div class="order-card-heading">
+          <div class="order-icon">
+            <ion-icon name="fast-food-outline" aria-hidden="true"></ion-icon>
+          </div>
+          <div class="order-title">
+            <p class="order-label">SEU PEDIDO</p>
+            <ion-card-title>{{ pedido.produto?.nome }}</ion-card-title>
+          </div>
+          <span class="status-badge" [ngClass]="getClassePorStatusDoPedido(pedido) || ''">
+            {{ getLabelPorStatusDoPedido(pedido) }}
+          </span>
         </div>
-      </ion-card-content>
-      <ion-card-content *ngIf="isPedidoCancelado(pedido)">
-        <ion-card-subtitle>Pedido cancelado!</ion-card-subtitle>
-        <ion-card-subtitle>Sentimos muito caso algo não tiver te agradado 😭😭</ion-card-subtitle>
-      </ion-card-content>
-      <ion-card-content *ngIf="isPedidoPronto(pedido)">
-        <ion-card-subtitle>Pedido pronto para retirada no balcão!</ion-card-subtitle>
-        <ion-card-subtitle>Bom Apetite! 😋😋</ion-card-subtitle>
-      </ion-card-content>
-      <ion-card-content *ngIf="isPedidoFinalizado(pedido)">
-        <ion-card-subtitle>Pedido finalizado!</ion-card-subtitle>
-        <ion-card-subtitle>Que tal pedir mais um? 😏😏</ion-card-subtitle>
-      </ion-card-content>
-      <div class="valor-produto" [ngClass]="getClassePorStatusDoPedido(pedido)"><strong>{{ getLabelPorStatusDoPedido(pedido) }}</strong></div>
-    </ion-card>
-  </ion-col>
-  <ion-card *ngIf="!listaMeusPedidos.length">
-    <ion-card-header class="text-center">
-      <ion-card-title>Opa, ainda não tem nenhum pedido na fila, que tal pedir um lanche?</ion-card-title>
-    </ion-card-header>
-  </ion-card>
+
+        <ion-card-content *ngIf="isPedidoEmAndamento(pedido) || isPedidoSolicitado(pedido)">
+          <p class="status-message">Seu pedido vai estar pronto aproximadamente as</p>
+          <div class="estimated-time">
+            <ion-icon name="alarm-outline" aria-hidden="true"></ion-icon>
+            <span>{{ calcularPrazoDoPedido(pedido) | date: 'HH:mm' }}</span>
+          </div>
+        </ion-card-content>
+        <ion-card-content *ngIf="isPedidoCancelado(pedido)">
+          <p class="status-message">Pedido cancelado!</p>
+          <p class="status-detail">Sentimos muito caso algo não tiver te agradado 😭😭</p>
+        </ion-card-content>
+        <ion-card-content *ngIf="isPedidoPronto(pedido)">
+          <p class="status-message">Pedido pronto para retirada no balcão!</p>
+          <p class="status-detail">Bom Apetite! 😋😋</p>
+        </ion-card-content>
+        <ion-card-content *ngIf="isPedidoFinalizado(pedido)">
+          <p class="status-message">Pedido finalizado!</p>
+          <p class="status-detail">Que tal pedir mais um? 😏😏</p>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <section class="empty-state" *ngIf="!listaMeusPedidos.length">
+      <div class="empty-icon">
+        <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
+      </div>
+      <h2>Opa, ainda não tem nenhum pedido na fila, que tal pedir um lanche?</h2>
+    </section>
+  </main>
 </ion-content>

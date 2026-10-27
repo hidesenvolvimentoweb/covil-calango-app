@@ -1,40 +1,79 @@
-<ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" class="text-center pt-2">
-        Bem vindo, <strong>{{ usuario.nome }}!</strong>
-      </ion-col>
-      <ion-col size="12" class="text-center">
-        O número da sua comanda é <strong>{{ usuario.comanda.numero }}</strong>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <app-ygo-menu-card icon="fast-food-outline" label="Cardápio Digital" (click)="toRoute('/cardapio')"></app-ygo-menu-card>
-  <app-ygo-menu-card icon="timer-outline" label="Meus Pedidos" (click)="toRoute('/meus-pedidos')"></app-ygo-menu-card>
-  <app-ygo-menu-card icon="podium" label="Dados da Liga" (click)="toRoute('/dados-liga')"></app-ygo-menu-card>
-  <ion-row>
-    <ion-col [size]="isVisitante() ? 12 : 6" class="text-center">
-      <app-ygo-menu-card icon="trophy-outline" (click)="toRoute('/meus-torneios')"></app-ygo-menu-card>
-    </ion-col>
-    <ion-col size="6" class="text-center" *ngIf="!isVisitante()">
-      <app-ygo-menu-card icon="person-outline" (click)="toRoute('/perfil')"></app-ygo-menu-card>
-    </ion-col>
-  </ion-row>
-  <ion-card *ngIf="listProximosTorneios.length > 0">
-    <ion-card-header class="text-center">
-      <ion-card-title>Próximos Torneios</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-accordion-group>
-        <app-ygo-accordion-torneio *ngFor="let torneio of listProximosTorneios" [torneio]="torneio"></app-ygo-accordion-torneio>
-      </ion-accordion-group>
-    </ion-card-content>
-  </ion-card>
-  <ion-card *ngIf="!listProximosTorneios.length">
-    <ion-card-header class="text-center">
-      <ion-card-title>Não há nenhum evento próximo!</ion-card-title>
-    </ion-card-header>
-  </ion-card>
-  
-  
+<ion-content class="home-content">
+  <main class="home-page">
+    <header class="welcome-header">
+      <div class="welcome-copy">
+        <p class="eyebrow">BEM-VINDO AO COVIL</p>
+        <h1>Olá, <span>{{ usuario.nome }}!</span></h1>
+        <p class="welcome-subtitle">Sua próxima experiência começa aqui.</p>
+      </div>
+      <button class="profile-button" type="button" aria-label="Abrir perfil" (click)="toRoute('/perfil')">
+        <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </header>
+
+    <section class="order-highlight" aria-label="Número da sua comanda">
+      <div class="order-icon">
+        <ion-icon name="fast-food-outline" aria-hidden="true"></ion-icon>
+      </div>
+      <div class="order-copy">
+        <p class="order-label">SUA COMANDA</p>
+        <h2>Nº {{ usuario.comanda?.numero }}</h2>
+        <p class="order-caption">Seu atendimento começa por aqui</p>
+      </div>
+      <span class="order-decoration" aria-hidden="true"></span>
+    </section>
+
+    <section class="actions-section" aria-labelledby="actions-title">
+      <div class="section-heading">
+        <h2 id="actions-title">O que deseja fazer?</h2>
+        <p>Acesse os serviços do Covil</p>
+      </div>
+
+      <div class="action-list">
+        <button class="action-card featured-action" type="button" (click)="toRoute('/cardapio')">
+          <span class="action-icon">
+            <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
+          </span>
+          <span class="action-copy">
+            <span class="action-title">Cardápio Digital</span>
+            <span class="action-description">Confira as opções disponíveis</span>
+          </span>
+          <ion-icon class="action-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <button class="action-card" type="button" (click)="toRoute('/meus-pedidos')">
+          <span class="action-icon">
+            <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
+          </span>
+          <span class="action-copy">
+            <span class="action-title">Meus Pedidos</span>
+            <span class="action-description">Acompanhe seus pedidos</span>
+          </span>
+          <ion-icon class="action-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <button class="action-card" type="button" (click)="toRoute('/minha-comanda')">
+          <span class="action-icon">
+            <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+          </span>
+          <span class="action-copy">
+            <span class="action-title">Minha Comanda</span>
+            <span class="action-description">Confira seus pedidos e o total</span>
+          </span>
+          <ion-icon class="action-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <button class="action-card" type="button" (click)="toRoute('/perfil')">
+          <span class="action-icon">
+            <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+          </span>
+          <span class="action-copy">
+            <span class="action-title">Meu Perfil</span>
+            <span class="action-description">Acesse suas informações</span>
+          </span>
+          <ion-icon class="action-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </section>
+  </main>
 </ion-content>

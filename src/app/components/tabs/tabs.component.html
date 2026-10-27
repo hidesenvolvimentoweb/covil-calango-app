@@ -1,10 +1,44 @@
 <ion-tabs>
   <ion-tab-bar slot="bottom">
-    <ion-tab-button>
-      <ion-icon name="home"></ion-icon>
+    <ion-tab-button
+      tab="home"
+      routerLink="/home"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <ion-icon name="home-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Início</ion-label>
     </ion-tab-button>
-    <ion-tab-button>
-      <ion-icon name="person-circle"></ion-icon>
+    <ion-tab-button
+      tab="cardapio"
+      routerLink="/cardapio"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Cardápio</ion-label>
+    </ion-tab-button>
+    <ion-tab-button
+      tab="minha-comanda"
+      routerLink="/minha-comanda"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Comanda</ion-label>
+    </ion-tab-button>
+    <ion-tab-button
+      tab="meus-pedidos"
+      routerLink="/meus-pedidos"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Pedidos</ion-label>
+    </ion-tab-button>
+    <ion-tab-button
+      tab="perfil"
+      routerLink="/perfil"
+      routerLinkActive="tab-selected"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Perfil</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

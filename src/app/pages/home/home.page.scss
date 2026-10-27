@@ -1,3 +1,234 @@
-ion-card {
-  margin: 2em !important;
+:host {
+  --home-background: #faf9f7;
+  --home-ink: #292621;
+  --home-muted: #8c8983;
+  --home-olive: #526342;
+  --home-green: #78bd49;
+  --home-green-dark: #4c7134;
+  --home-cream: #edf2e8;
+}
+
+.home-content {
+  --background: var(--home-background);
+}
+
+.home-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 1.5rem) 1.25rem 2rem;
+  color: var(--home-ink);
+}
+
+.welcome-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.welcome-copy {
+  min-width: 0;
+}
+
+.eyebrow,
+.order-label {
+  margin: 0;
+  color: var(--home-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.welcome-copy h1 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.65rem, 7vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.welcome-copy h1 span {
+  color: var(--home-green-dark);
+}
+
+.welcome-subtitle {
+  margin: 0.4rem 0 0;
+  color: var(--home-muted);
+  font-size: 0.9rem;
+}
+
+.profile-button {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  place-items: center;
+  border: 0;
+  border-radius: 1.1rem;
+  background: #f1eee8;
+  color: var(--home-ink);
+  font-size: 1.3rem;
+}
+
+.order-highlight {
+  position: relative;
+  display: flex;
+  min-height: 8.5rem;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+  padding: 1.25rem;
+  border-radius: 1.35rem;
+  background: var(--home-olive);
+  color: #fff;
+}
+
+.order-icon {
+  z-index: 1;
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  flex: 0 0 4.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 2rem;
+}
+
+.order-copy {
+  z-index: 1;
+}
+
+.order-label {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.order-copy h2 {
+  margin: 0.35rem 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.order-caption {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.8rem;
+}
+
+.order-decoration {
+  position: absolute;
+  right: -2rem;
+  bottom: -3.25rem;
+  width: 9rem;
+  height: 9rem;
+  border: 1.4rem solid rgba(255, 255, 255, 0.09);
+  border-radius: 50%;
+}
+
+.actions-section {
+  margin-top: 2rem;
+}
+
+.section-heading {
+  margin-bottom: 1rem;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.section-heading p {
+  margin: 0.35rem 0 0;
+  color: var(--home-muted);
+  font-size: 0.85rem;
+}
+
+.action-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.action-card {
+  display: flex;
+  width: 100%;
+  min-height: 5.6rem;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(41, 38, 33, 0.04);
+  border-radius: 1.15rem;
+  background: #fff;
+  color: var(--home-ink);
+  text-align: left;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.action-card:active {
+  transform: scale(0.985);
+}
+
+.featured-action {
+  background: #f7faf4;
+  border-color: rgba(82, 99, 66, 0.18);
+}
+
+.action-icon {
+  display: grid;
+  width: 3.65rem;
+  height: 3.65rem;
+  flex: 0 0 3.65rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--home-cream);
+  color: var(--home-green-dark);
+  font-size: 1.55rem;
+}
+
+.featured-action .action-icon {
+  background: var(--home-green);
+  color: #1d2817;
+}
+
+.action-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 0.3rem;
+}
+
+.action-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.action-description {
+  overflow: hidden;
+  color: var(--home-muted);
+  font-size: 0.79rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-arrow {
+  flex: 0 0 auto;
+  color: #aaa59d;
+  font-size: 1.1rem;
+}
+
+@media (min-width: 600px) {
+  .home-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
+
+  .welcome-header {
+    margin-bottom: 2rem;
+  }
 }

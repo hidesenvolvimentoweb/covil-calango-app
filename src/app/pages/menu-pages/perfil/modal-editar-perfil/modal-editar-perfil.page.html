@@ -1,21 +1,31 @@
-<ion-header class="text-center">
+<ion-header class="profile-modal-header">
   <ion-toolbar>
     <ion-title>Editar Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form [formGroup]="formPerfil">
-    <ion-item>
-      <ion-label position="floating">Nome</ion-label>
-      <ion-input formControlName="nome"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Telefone (Whatsapp)</ion-label>
-      <ion-input formControlName="contato"></ion-input>
-    </ion-item>
-    <ion-col size="12" class="text-center">
-      <ion-button color="primary" (click)="salvarPerfil()" expand="block"> Salvar Perfil</ion-button>
-    </ion-col>
-  </form>
+<ion-content class="profile-modal-content">
+  <main class="profile-modal-page">
+    <p class="eyebrow">MANTENHA SEUS DADOS ATUALIZADOS</p>
+    <h1>Seus dados</h1>
+
+    <form class="profile-form" [formGroup]="formPerfil">
+      <ion-item class="profile-field" lines="none">
+        <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+        <ion-label position="floating">Nome</ion-label>
+        <ion-input formControlName="nome" autocomplete="name"></ion-input>
+      </ion-item>
+
+      <ion-item class="profile-field" lines="none">
+        <ion-icon slot="start" name="call-outline" aria-hidden="true"></ion-icon>
+        <ion-label position="floating">Telefone (Whatsapp)</ion-label>
+        <ion-input formControlName="contato" type="tel" autocomplete="tel"></ion-input>
+      </ion-item>
+
+      <ion-button class="save-button" color="primary" expand="block" (click)="salvarPerfil()">
+        Salvar Perfil
+        <ion-icon slot="end" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </form>
+  </main>
 </ion-content>

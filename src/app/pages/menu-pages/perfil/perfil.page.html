@@ -1,39 +1,48 @@
 <app-ygo-header-component [title]="'Perfil'"></app-ygo-header-component>
-<div class="background"></div>
-<ion-content>
-  <div class="background"></div>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" class="align-center text-center pt-4">
-        <ion-avatar>
-          <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y" alt="img-user">
-        </ion-avatar>
-      </ion-col>
-      <ion-col size="12" class="text-center">
-        <strong>
-          <h1>Olá, {{ usuario.nome }}!</h1>
-        </strong>
-        <!-- <p>{{ obterRankingUsuario(usuario.pontos) }} ({{ usuario.pontos }} Pontos)</p> -->
-        <p>Em breve, você poderá visualizar a quantidade de Calango Coins que possui aqui, além de informações e bônus adicionais!</p>
-        <!-- <p>Você possui {{ usuario.creditos | currency: 'R$' }} de créditos na Covil do Calango</p> -->
-      </ion-col>
-      <!-- <ion-col size="12" class="text-center">
-        <ion-button color="primary" (click)="openModalPerfil()" expand="block"> Alterar Dados do Perfil</ion-button>
-      </ion-col> -->
-      <ion-col size="12" class="text-center">
-        <ion-button color="primary" (click)="openModalRegrasPermanencia()" expand="block"> Regras de Permanência</ion-button>
-      </ion-col>
-      <ion-col size="12" class="text-center">
-        <ion-button color="primary" (click)="openModalInformacoesCalango()" expand="block"> Sobre a Covil</ion-button>
-      </ion-col>
-      <ion-col class="align-center text-center">
-        <p>Versão {{ version }}</p>
-      </ion-col>
-      <ion-col size="12" class="text-center">
-        <ion-button color="primary" (click)="sair()" size="small">
-          <ion-icon name="exit-outline"></ion-icon> Sair
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
+<ion-content class="profile-content">
+  <main class="profile-page">
+    <section class="profile-card">
+      <div class="profile-avatar">
+        <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y" alt="Foto do perfil">
+      </div>
+      <p class="eyebrow">SEU ESPAÇO NO COVIL</p>
+      <h1>Olá, <span>{{ usuario.nome }}!</span></h1>
+      <p class="profile-description">
+        Em breve, você poderá visualizar a quantidade de Calango Coins que possui aqui, além de informações e bônus adicionais!
+      </p>
+    </section>
+
+    <section class="profile-options" aria-label="Opções do perfil">
+      <button class="profile-option" type="button" (click)="openModalRegrasPermanencia()">
+        <span class="option-icon">
+          <ion-icon name="reader-outline" aria-hidden="true"></ion-icon>
+        </span>
+        <span class="option-copy">
+          <span class="option-title">Regras de Permanência</span>
+          <span class="option-description">Consulte as regras do espaço</span>
+        </span>
+        <ion-icon class="option-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+      </button>
+
+      <button class="profile-option" type="button" (click)="openModalInformacoesCalango()">
+        <span class="option-icon">
+          <ion-icon name="leaf-outline" aria-hidden="true"></ion-icon>
+        </span>
+        <span class="option-copy">
+          <span class="option-title">Sobre a Covil</span>
+          <span class="option-description">Conheça mais sobre a gente</span>
+        </span>
+        <ion-icon class="option-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </section>
+
+    <footer class="profile-footer">
+      <p>Versão {{ version }}</p>
+      <ion-button class="logout-button" color="primary" (click)="sair()" size="small">
+        <ion-icon slot="start" name="exit-outline" aria-hidden="true"></ion-icon>
+        Sair
+      </ion-button>
+    </footer>
+  </main>
 </ion-content>

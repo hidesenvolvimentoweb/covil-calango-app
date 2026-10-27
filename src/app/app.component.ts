@@ -10,7 +10,7 @@ import packageJson from '../../package.json';
 })
 export class AppComponent {
 
-  public usuario: JogadorDTO;
+  public usuario: JogadorDTO | null;
 
   constructor(private storageService: StorageService) {
     this.usuario = this.storageService.get(KEY_USUARIO);

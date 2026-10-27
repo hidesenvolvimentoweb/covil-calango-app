@@ -1,27 +1,69 @@
-<ion-header class="text-center">
+<ion-header class="modal-header">
   <ion-toolbar>
     <ion-title>Confirmar Pedido</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-	<ion-card>
-		<ion-card-header>
-      <ion-title>
-        {{ quantidade?.value }}x {{ produto?.nome }}
-      </ion-title>
-    </ion-card-header>
-    <ion-toolbar>
-      <ion-title>{{ (produto?.valor * quantidade?.value) | currency: 'BRL' }}</ion-title>
-    </ion-toolbar>
-    <form [formGroup]="form">
-      <ion-item>
-        <ion-icon name="remove-circle" item-right (click)="removerProduto()"></ion-icon>
-        <ion-input class="text-center" type="number" min="1" formControlName="quantidade"></ion-input>
-        <ion-icon name="add-circle" item-right (click)="addProduto()"></ion-icon>
-      </ion-item>
-    </form>
-	</ion-card>
-  <ion-button class="btn-confirmar" expand="block" fill="outline" color="primary" (click)="confirmarPedido()">Confirmar</ion-button>
-</ion-content>
+<ion-content class="confirmation-content">
+  <main class="confirmation-page">
+    <p class="eyebrow">QUASE LÁ</p>
+    <h1>Revise seu pedido</h1>
 
+    <ion-card class="confirmation-card">
+      <div class="product-image-container" *ngIf="produto?.imagem">
+        <img [src]="produto.imagem" [alt]="produto.nome" />
+      </div>
+
+      <ion-card-header>
+        <p class="product-label">SEU PEDIDO</p>
+        <ion-card-title>{{ quantidade?.value }}x {{ produto?.nome }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="form">
+          <div class="quantity-row">
+            <div class="quantity-copy">
+              <span class="quantity-title">Quantidade</span>
+              <span class="quantity-caption">Mínimo de 1 unidade</span>
+            </div>
+            <div class="quantity-control">
+              <ion-button
+                type="button"
+                fill="clear"
+                aria-label="Remover uma unidade"
+                [disabled]="quantidade?.value <= 1"
+                (click)="removerProduto()">
+                <ion-icon slot="icon-only" name="remove-circle-outline" aria-hidden="true"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="quantity-input"
+                type="number"
+                min="1"
+                inputmode="numeric"
+                aria-label="Quantidade"
+                formControlName="quantidade">
+              </ion-input>
+              <ion-button
+                type="button"
+                fill="clear"
+                aria-label="Adicionar uma unidade"
+                (click)="addProduto()">
+                <ion-icon slot="icon-only" name="add-circle-outline" aria-hidden="true"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </form>
+
+        <div class="total-row">
+          <span>Total do pedido</span>
+          <strong>{{ (produto?.valor || 0) * (quantidade?.value || 0) | currency: 'BRL' }}</strong>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button class="confirm-button" expand="block" color="primary" (click)="confirmarPedido()">
+      Confirmar Pedido
+      <ion-icon slot="end" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+  </main>
+</ion-content>

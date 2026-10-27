@@ -1,21 +1,65 @@
-<ion-content>
-  <ion-searchbar class="p-2" placeholder="Pesquisar Produtos" [debounce]="1000" (ionInput)="handleInput($event)"></ion-searchbar>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" *ngFor="let produto of listaDeProdutosFiltrada">
-        <ion-card button class="no-margin-top">
-          <img alt="Silhouette of mountains" [attr.src]="produto.imagem" />
-          <ion-card-header>
-            <ion-card-title>{{ produto.nome }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-card-subtitle>Ingredientes</ion-card-subtitle>
-            {{ produto.ingredientes }}
-          </ion-card-content>
-          <div class="valor-produto"><strong>{{ produto.valor | currency: 'BRL' }}</strong></div>
-          <ion-button class="m-1" expand="block" size="medium" color="primary" (click)="realizarPedido(produto)">Eu Quero!</ion-button>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+<ion-content class="menu-content">
+  <main class="menu-page">
+    <header class="page-intro">
+      <p class="eyebrow">FEITO PARA VOCÊ</p>
+      <h1>Cardápio Digital</h1>
+      <p class="intro-caption">Encontre seu próximo favorito no Covil.</p>
+    </header>
+
+    <div class="search-container">
+      <ion-searchbar
+        class="product-search"
+        placeholder="Pesquisar produtos"
+        aria-label="Pesquisar produtos"
+        [debounce]="1000"
+        (ionInput)="handleInput($event)">
+      </ion-searchbar>
+    </div>
+
+    <section class="category-section" aria-label="Categorias do cardápio">
+      <h2 class="section-title">Categorias</h2>
+      <div class="category-list">
+        <button
+          class="category-chip"
+          type="button"
+          *ngFor="let categoria of categorias"
+          [class.selected]="categoriaSelecionada === categoria.nome"
+          [attr.aria-pressed]="categoriaSelecionada === categoria.nome"
+          (click)="selecionarCategoria(categoria.nome)">
+          <ion-icon [name]="categoria.icone" aria-hidden="true"></ion-icon>
+          <span>{{ categoria.nome }}</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="product-list" *ngIf="listaDeProdutosFiltrada.length">
+      <ion-card class="product-card" *ngFor="let produto of listaDeProdutosFiltrada">
+        <div class="product-image-container">
+          <img [attr.alt]="produto.nome" [attr.src]="produto.imagem" />
+          <div class="product-price">
+            <strong>{{ produto.valor | currency: 'BRL' }}</strong>
+          </div>
+        </div>
+        <ion-card-header>
+          <ion-card-title>{{ produto.nome }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="ingredients-label">INGREDIENTES</p>
+          <p class="ingredients">{{ produto.ingredientes }}</p>
+          <ion-button expand="block" color="primary" (click)="realizarPedido(produto)">
+            Eu Quero!
+            <ion-icon slot="end" name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <section class="empty-state" *ngIf="!listaDeProdutosFiltrada.length">
+      <div class="empty-icon">
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </div>
+      <h2>Nenhum produto encontrado</h2>
+      <p>Tente pesquisar por outro nome ou ingrediente.</p>
+    </section>
+  </main>
 </ion-content>
