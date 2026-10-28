@@ -7,45 +7,74 @@ import { LoadingController } from '@ionic/angular';
 @Injectable()
 export class HttpLoadingInterceptor implements HttpInterceptor {
   private loadingElement: HTMLIonLoadingElement | null = null;
+  private loadingPromise: Promise<void> | null = null;
   private requestCount = 0;
 
   constructor(private loadingController: LoadingController) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.requestCount++;
+    const shouldShowLoading = ++this.requestCount === 1;
 
-    if (this.requestCount === 1) {
-      return from(this.showLoading()).pipe(
-        switchMap(() => next.handle(req).pipe(
-          finalize(() => this.handleFinalize())
-        ))
-      );
-    }
-
-    return next.handle(req).pipe(
+    return from(shouldShowLoading ? this.showLoading() : Promise.resolve()).pipe(
+      switchMap(() => next.handle(req)),
       finalize(() => this.handleFinalize())
     );
   }
 
-  private async showLoading(): Promise<void> {
-    if (!this.loadingElement) {
-      this.loadingElement = await this.loadingController.create({
-        message: 'Carregando...',
-        spinner: 'crescent',
+  private showLoading(): Promise<void> {
+    if (!this.loadingPromise) {
+      const loadingPromise = this.createAndPresentLoading();
+      this.loadingPromise = loadingPromise;
+      loadingPromise.catch(() => {
+        if (this.loadingPromise === loadingPromise) {
+          this.loadingPromise = null;
+        }
       });
-      await this.loadingElement.present();
     }
+
+    return this.loadingPromise;
+  }
+
+  private async createAndPresentLoading(): Promise<void> {
+    const loading = await this.loadingController.create({
+      message: 'Carregando...',
+      spinner: 'crescent',
+    });
+
+    this.loadingElement = loading;
+    await loading.present();
   }
 
   private async hideLoading(): Promise<void> {
-    if (this.loadingElement) {
-      await this.loadingElement.dismiss();
-      this.loadingElement = null;
+    const pendingShow = this.loadingPromise;
+
+    if (pendingShow) {
+      try {
+        await pendingShow;
+      } catch (error) {
+        console.error('Falha ao exibir o loading de requisições HTTP.', error);
+      }
+    }
+
+    if (this.requestCount !== 0) {
+      return;
+    }
+
+    const currentLoading = this.loadingElement;
+    this.loadingElement = null;
+    this.loadingPromise = null;
+
+    if (currentLoading) {
+      try {
+        await currentLoading.dismiss();
+      } catch (error) {
+        console.error('Falha ao fechar o loading de requisições HTTP.', error);
+      }
     }
   }
 
   private handleFinalize(): void {
-    this.requestCount--;
+    this.requestCount = Math.max(this.requestCount - 1, 0);
 
     if (this.requestCount === 0) {
       this.hideLoading();

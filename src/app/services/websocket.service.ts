@@ -13,7 +13,7 @@ const RECONNECT_DELAY = 5000;
 export class WebsocketService {
 
   public stompClient: CompatClient;
-  public simpSessionId: string;
+  public simpSessionId?: string;
 
   private connectionStarted = false;
   private connectionObservers: Observer<string>[] = [];
@@ -33,7 +33,7 @@ export class WebsocketService {
    * @returns Retorna um Observable<string>, onde essa string é um simpSessionId, utilizada caso necessária.
    */
   createWebSocketConnection(): Observable<string> {
-    if (this.simpSessionId) {
+    if (this.stompClient?.connected && this.simpSessionId) {
       return of(this.simpSessionId);
     }
 
@@ -45,6 +45,7 @@ export class WebsocketService {
         this.stompClient.reconnectDelay = RECONNECT_DELAY;
         this.stompClient.connectionTimeout = 10000;
         this.stompClient.onWebSocketClose = () => {
+          this.simpSessionId = undefined;
           this.sessionSubscription = null;
           this.comandaSubscriptions.clear();
         };
@@ -98,10 +99,6 @@ export class WebsocketService {
   }
 
   private setSessionId(sessionId: string): void {
-    if (this.simpSessionId) {
-      return;
-    }
-
     this.simpSessionId = sessionId;
     const observers = [...this.connectionObservers];
     this.connectionObservers = [];

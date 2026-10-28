@@ -11,7 +11,7 @@ export class StorageService {
   constructor() { }
 
   getNumeroDaComanda(): number | string {
-    return this.get<JogadorDTO>(KEY_USUARIO).comanda.numero;
+    return this.get<JogadorDTO>(KEY_USUARIO)?.comanda?.numero || '';
   }
 
   get<T>(key: string): T | null {

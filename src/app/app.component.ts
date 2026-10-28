@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { JogadorDTO } from './model/jogador.dto';
 import { KEY_USUARIO, StorageService } from './services/storage.service';
+import { WebsocketService } from './services/websocket.service';
 import packageJson from '../../package.json';
 
 @Component({
@@ -8,16 +9,23 @@ import packageJson from '../../package.json';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   public usuario: JogadorDTO | null;
 
-  constructor(private storageService: StorageService) {
+  static get version() {
+    return packageJson.version;
+  }
+
+  constructor(
+    private storageService: StorageService,
+    private websocketService: WebsocketService
+  ) {
     this.usuario = this.storageService.get(KEY_USUARIO);
   }
 
-  static get version() {
-    return packageJson.version;
+  ngOnInit(): void {
+    this.websocketService.createWebSocketConnection().subscribe();
   }
 
 }
