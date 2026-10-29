@@ -1,14 +1,13 @@
 import { Component, Injector } from '@angular/core';
-import { RankingEnum } from 'src/app/enums/ranking.enum';
 import { GenericClass } from 'src/app/model/generic.class';
 import { ModalEditarPerfilPage } from './modal-editar-perfil/modal-editar-perfil.page';
 import { ModalInformacoesPage } from './modal-informacoes/modal-informacoes.page';
 import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
-import { JogadorDTO } from 'src/app/model/jogador.dto';
 import { ComandaService } from 'src/app/services/comanda.service';
 import { ParametrosService } from 'src/app/services/parametros.service';
 import { AppComponent } from 'src/app/app.component';
-import { IonBackButtonDelegate, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { UsuarioDTO } from 'src/app/model/usuario.dto';
 
 const PARAMETRO_REGRA_PERMANENCIA = 'PARAMETRO_REGRA_PERMANENCIA';
 const PARAMETRO_INFORMACOES_CALANGO = 'PARAMETRO_INFORMACOES_CALANGO';
@@ -20,8 +19,8 @@ const PARAMETRO_INFORMACOES_CALANGO = 'PARAMETRO_INFORMACOES_CALANGO';
 })
 export class PerfilPage extends GenericClass {
 
-  public usuario: JogadorDTO;
-  public modalAberto: HTMLIonModalElement;
+  public usuario: UsuarioDTO | null = null;
+  public modalAberto!: HTMLIonModalElement;
 
   constructor(
     public injector: Injector,
@@ -81,43 +80,6 @@ export class PerfilPage extends GenericClass {
       });
       await this.modalAberto.present();
     });
-  }
-
-  obterRankingUsuario(pontos: number) {
-    switch (true) {
-      case pontos >= 81920:
-        return RankingEnum.DIAMANTE1;
-      case pontos >= 40960:
-        return RankingEnum.DIAMANTE2;
-      case pontos >= 20480:
-        return RankingEnum.DIAMANTE3;
-      case pontos >= 10240:
-        return RankingEnum.PLATINA1;
-      case pontos >= 5120:
-        return RankingEnum.PLATINA2;
-      case pontos >= 2560:
-        return RankingEnum.PLATINA3;
-      case pontos >= 1280:
-        return RankingEnum.OURO1;
-      case pontos >= 640:
-        return RankingEnum.OURO2;
-      case pontos >= 320:
-        return RankingEnum.OURO3;
-      case pontos >= 160:
-        return RankingEnum.PRATA1;
-      case pontos >= 80:
-        return RankingEnum.PRATA2;
-      case pontos >= 40:
-        return RankingEnum.PRATA3;
-      case pontos >= 20:
-        return RankingEnum.BRONZE1;
-      case pontos >= 10:
-        return RankingEnum.BRONZE2;
-      case pontos >= 5:
-        return RankingEnum.BRONZE3;
-      case pontos === 0:
-        return RankingEnum.UNRANKED;
-    }
   }
 
   async sair() {

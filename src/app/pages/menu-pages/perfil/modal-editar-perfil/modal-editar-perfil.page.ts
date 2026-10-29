@@ -1,7 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GenericClass } from 'src/app/model/generic.class';
-import { JogadorDTO } from 'src/app/model/jogador.dto';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
@@ -13,8 +12,8 @@ import { UsuarioDTO } from 'src/app/model/usuario.dto';
 })
 export class ModalEditarPerfilPage extends GenericClass implements OnInit {
 
-  public formPerfil: FormGroup;
-  public usuario: JogadorDTO;
+  public formPerfil!: FormGroup;
+  public usuario: UsuarioDTO | null = null;
 
   constructor(
     public injector: Injector,
@@ -32,9 +31,9 @@ export class ModalEditarPerfilPage extends GenericClass implements OnInit {
   configurarForm() {
     this.usuario = this.storageService.get(KEY_USUARIO);
     this.formPerfil = this.formBuilder.group({
-      id: [this.usuario.id, Validators.required],
-      nome: [this.usuario.nome, Validators.required],
-      contato: [this.usuario.contato],
+      id: [this.usuario?.id, Validators.required],
+      nome: [this.usuario?.nome, Validators.required],
+      contato: [this.usuario?.contato],
     });
   }
 
@@ -45,9 +44,7 @@ export class ModalEditarPerfilPage extends GenericClass implements OnInit {
         buttons: ['OK']
       })).present().then(() => {
         this.modalController.dismiss();
-        const jogadorLogado = this.storageService.get<JogadorDTO>(KEY_USUARIO);
-        jogadorLogado.comanda.usuario = usuario;
-        this.storageService.set(KEY_USUARIO, jogadorLogado);
+        this.storageService.set(KEY_USUARIO, usuario);
       })
     );
   }

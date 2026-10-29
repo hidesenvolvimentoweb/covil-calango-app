@@ -15,6 +15,7 @@ import { StorageService } from 'src/app/services/storage.service';
 export class MeusPedidosPage extends GenericClass implements ViewWillEnter {
 
   public listaMeusPedidos: PedidoDTO[] = [];
+  private pedidosExpandidos = new Set<PedidoDTO>();
 
   constructor(
     public injector: Injector,
@@ -47,8 +48,21 @@ export class MeusPedidosPage extends GenericClass implements ViewWillEnter {
   ionViewWillEnter(): void {
     this.pedidosService.getAllByParams(this.buildParams()).subscribe(res => {
       this.listaMeusPedidos = res;
+      this.pedidosExpandidos.clear();
       this.ordenarPedidosPorPrioridade();
     });
+  }
+
+  alternarDetalhes(pedido: PedidoDTO): void {
+    if (this.pedidosExpandidos.has(pedido)) {
+      this.pedidosExpandidos.delete(pedido);
+      return;
+    }
+    this.pedidosExpandidos.add(pedido);
+  }
+
+  isPedidoExpandido(pedido: PedidoDTO): boolean {
+    return this.pedidosExpandidos.has(pedido);
   }
 
   buildParams() {

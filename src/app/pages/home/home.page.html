@@ -3,7 +3,7 @@
     <header class="welcome-header">
       <div class="welcome-copy">
         <p class="eyebrow">BEM-VINDO AO COVIL</p>
-        <h1>Olá, <span>{{ usuario.nome }}!</span></h1>
+        <h1>Olá, <span>{{ usuario?.nome }}!</span></h1>
         <p class="welcome-subtitle">Sua próxima experiência começa aqui.</p>
       </div>
       <button class="profile-button" type="button" aria-label="Abrir perfil" (click)="toRoute('/perfil')">
@@ -17,7 +17,7 @@
       </div>
       <div class="order-copy">
         <p class="order-label">SUA COMANDA</p>
-        <h2>Nº {{ usuario.comanda?.numero }}</h2>
+        <h2>Nº {{ comanda?.numero }}</h2>
         <p class="order-caption">Seu atendimento começa por aqui</p>
       </div>
       <span class="order-decoration" aria-hidden="true"></span>

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { from, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { JogadorDTO } from '../model/jogador.dto';
 import { KEY_USUARIO, StorageService } from '../services/storage.service';
 import { UsuarioDTO } from '../model/usuario.dto';
 
@@ -24,8 +23,8 @@ export class HttpAuthInterceptor implements HttpInterceptor {
     );
   }
 
-  getToken(): Observable<JogadorDTO> {
-    return from([this.storageService.get(KEY_USUARIO) as JogadorDTO]);
+  getToken(): Observable<any> {
+    return from([this.storageService.get(KEY_USUARIO)]);
   }
 
   addToken(request: HttpRequest<any>, usuario: UsuarioDTO): HttpRequest<any> {

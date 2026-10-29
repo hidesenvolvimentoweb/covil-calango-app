@@ -8,6 +8,7 @@ import { CardapioPage } from './pages/cardapio/cardapio.page';
 import { MeusPedidosPage } from './pages/meus-pedidos/meus-pedidos.page';
 import { MinhaComandaPage } from './pages/minha-comanda/minha-comanda.page';
 import { HasLoginGuard } from './guards/has-login.guard';
+import { LoginUsuarioPage } from './pages/login/login-usuario/login-usuario.page';
 
 const routes: Routes = [
   {
@@ -43,6 +44,11 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginPage,
+    canActivate: [HasLoginGuard]
+  },
+  {
+    path: 'login-usuario',
+    component: LoginUsuarioPage,
     canActivate: [HasLoginGuard]
   },
 ];

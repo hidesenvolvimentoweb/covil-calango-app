@@ -1,8 +1,8 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { TorneioDTO } from 'src/app/model/torneio.dto';
+import { ComandaDTO } from 'src/app/model/comanda.dto';
 import { GenericClass } from 'src/app/model/generic.class';
-import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
-import { JogadorDTO } from 'src/app/model/jogador.dto';
+import { UsuarioDTO } from 'src/app/model/usuario.dto';
+import { KEY_COMANDA, KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +11,8 @@ import { JogadorDTO } from 'src/app/model/jogador.dto';
 })
 export class HomePage extends GenericClass implements OnInit {
 
-  public listProximosTorneios: TorneioDTO[] = [];
-  public usuario!: JogadorDTO;
+  public usuario!: UsuarioDTO | null;
+  public comanda!: ComandaDTO | null;
 
   constructor(
     public injector: Injector,
@@ -22,7 +22,8 @@ export class HomePage extends GenericClass implements OnInit {
   }
 
   ngOnInit(): void {
-    this.usuario = this.storageService.get(KEY_USUARIO) as JogadorDTO;
+    this.usuario = this.storageService.get(KEY_USUARIO) as UsuarioDTO | null;
+    this.comanda = this.storageService.get(KEY_COMANDA) as ComandaDTO | null;
   }
 
 }

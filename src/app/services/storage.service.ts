@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
-import { JogadorDTO } from '../model/jogador.dto';
 
 export const KEY_USUARIO = 'USUARIO';
+export const KEY_COMANDA = 'COMANDA';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
 
-  constructor() { }
-
   getNumeroDaComanda(): number | string {
-    return this.get<JogadorDTO>(KEY_USUARIO)?.comanda?.numero || '';
+    return this.get<any>(KEY_COMANDA)?.numero || '';
   }
 
   get<T>(key: string): T | null {

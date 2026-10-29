@@ -1,13 +1,19 @@
+import { PerfilDTO } from './perfil.dto';
+
 export class UsuarioDTO {
   public id?: number;
   public nome?: string;
-  public contato?: number;
+  public contato?: string;
   public token?: string;
+  public email?: string;
+  public perfis?: PerfilDTO[];
 
-  constructor(id: number, nome: string, contato: number, token: string) {
-    this.id = id;
-    this.nome = nome;
-    this.contato = contato;
-    this.token = token;
+  constructor(usuario?: Partial<UsuarioDTO>) {
+    this.id = usuario?.id;
+    this.nome = usuario?.nome;
+    this.contato = usuario?.contato;
+    this.token = usuario?.token;
+    this.email = usuario?.email;
+    this.perfis = usuario?.perfis;
   }
 }

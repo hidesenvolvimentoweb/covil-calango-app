@@ -7,7 +7,13 @@
     </header>
 
     <section class="orders-list" *ngIf="listaMeusPedidos.length">
-      <ion-card button class="order-card" *ngFor="let pedido of listaMeusPedidos">
+      <ion-card
+        button
+        class="order-card"
+        *ngFor="let pedido of listaMeusPedidos"
+        (click)="alternarDetalhes(pedido)"
+        [attr.aria-expanded]="isPedidoExpandido(pedido)"
+        [attr.aria-controls]="'pedido-detalhes-' + pedido.id">
         <div class="order-card-heading">
           <div class="order-icon">
             <ion-icon name="fast-food-outline" aria-hidden="true"></ion-icon>
@@ -19,6 +25,12 @@
           <span class="status-badge" [ngClass]="getClassePorStatusDoPedido(pedido) || ''">
             {{ getLabelPorStatusDoPedido(pedido) }}
           </span>
+          <ion-icon
+            class="expand-icon"
+            [class.expanded]="isPedidoExpandido(pedido)"
+            name="chevron-down-outline"
+            aria-hidden="true">
+          </ion-icon>
         </div>
 
         <ion-card-content *ngIf="isPedidoEmAndamento(pedido) || isPedidoSolicitado(pedido)">
@@ -40,6 +52,35 @@
           <p class="status-message">Pedido finalizado!</p>
           <p class="status-detail">Que tal pedir mais um? 😏😏</p>
         </ion-card-content>
+
+        <div
+          class="product-details-collapse"
+          [class.open]="isPedidoExpandido(pedido)"
+          [attr.aria-hidden]="!isPedidoExpandido(pedido)"
+          [id]="'pedido-detalhes-' + pedido.id">
+          <div class="product-details-inner">
+            <ion-card-content class="product-details">
+              <div class="product-info">
+                <div class="product-info-row">
+                  <span>Preço unitário</span>
+                  <strong>{{ (pedido.produto?.valor || 0) | currency: 'BRL' }}</strong>
+                </div>
+                <div class="product-info-row">
+                  <span>Prazo de preparo</span>
+                  <strong>{{ pedido.produto?.prazo || 0 }} min</strong>
+                </div>
+                <div class="product-info-row">
+                  <span>Quantidade</span>
+                  <strong>{{ pedido.quantidade || 0 }}x</strong>
+                </div>
+                <div class="product-info-row product-total">
+                  <span>Total do pedido</span>
+                  <strong>{{ ((pedido.produto?.valor || 0) * (pedido.quantidade || 0)) | currency: 'BRL' }}</strong>
+                </div>
+              </div>
+            </ion-card-content>
+          </div>
+        </div>
       </ion-card>
     </section>
 

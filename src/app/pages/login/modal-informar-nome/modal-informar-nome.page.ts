@@ -1,13 +1,13 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GenericClass } from 'src/app/model/generic.class';
-import { JogadorDTO } from 'src/app/model/jogador.dto';
-import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
+import { KEY_COMANDA, KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { ComandaDTO } from 'src/app/model/comanda.dto';
 import { SolicitacaoDTO } from 'src/app/model/solicitacao.dto';
 import { LoadingController } from '@ionic/angular';
 import { fromStatusSolicitacaoEnumValue, StatusSolicitacaoEnum } from 'src/app/enums/status-solicitacao.enum';
+import { UsuarioDTO } from 'src/app/model/usuario.dto';
 
 @Component({
   selector: 'app-modal-informar-nome',
@@ -16,8 +16,8 @@ import { fromStatusSolicitacaoEnumValue, StatusSolicitacaoEnum } from 'src/app/e
 })
 export class ModalInformarNomePage extends GenericClass implements OnInit {
 
-  public form: FormGroup;
-  public usuario: JogadorDTO;
+  public form!: FormGroup;
+  public usuario: UsuarioDTO | null = null;
   private loading: HTMLIonLoadingElement | null = null;
   private comandaRequestId: string | null = null;
 
@@ -39,7 +39,6 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
   configurarForm() {
     this.form = this.formBuilder.group({
       usuario: [null, [Validators.required, Validators.minLength(3)]],
-      email: [null, [Validators.required, Validators.email]],
     });
   }
 
@@ -49,9 +48,9 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
     });
   }
 
-  setarDadosResponse(res: ComandaDTO) {
-    const jogadorDTO: JogadorDTO = new JogadorDTO(1, null, null, res.usuario, res);
-    this.storageService.set(KEY_USUARIO, jogadorDTO);
+  setarDadosResponse(res: ComandaDTO | undefined): void {
+    this.storageService.set(KEY_USUARIO, res?.usuario);
+    this.storageService.set(KEY_COMANDA, res);
     this.router.navigate(['/home']);
   }
 

@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AccordionHistoricoComponent } from './components/accordion-historico/accordion-historico.component';
 import { AccordionNotificacaoComponent } from './components/accordion-notificacao/accordion-notificacao.component';
-import { AccordionTorneioComponent } from './components/accordion-torneio/accordion-torneio.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { TabsComponent } from './components/tabs/tabs.component';
@@ -26,6 +25,7 @@ import { HTTP_LOADER_INTERCEPTOR_PROVIDER } from './interceptors/http-loading.in
 import { HTTP_ERROR_INTERCEPTOR_PROVIDER } from './interceptors/http-error.interceptor';
 import { HTTP_AUTH_INTERCEPTOR_PROVIDER } from './interceptors/http-auth.interceptor';
 import { ModalInformarNomePage } from './pages/login/modal-informar-nome/modal-informar-nome.page';
+import { LoginUsuarioPage } from './pages/login/login-usuario/login-usuario.page';
 
 import localePt from '@angular/common/locales/pt';
 
@@ -38,11 +38,11 @@ registerLocaleData(localePt);
     TabsComponent,
     HeaderComponent,
     MenuCardComponent,
-    AccordionTorneioComponent,
     AccordionNotificacaoComponent,
     AccordionHistoricoComponent,
     // Páginas
     LoginPage,
+    LoginUsuarioPage,
     HomePage,
     CardapioPage,
     PerfilPage,

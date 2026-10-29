@@ -22,7 +22,8 @@ export class TabsComponent extends GenericClass {
   }
 
   private isNotLoginRoute(url: string): boolean {
-    return url.split(/[?#]/, 1)[0] !== '/login';
+    const path = url.split(/[?#]/, 1)[0];
+    return path !== '/login' && path !== '/login-usuario';
   }
 
 }
