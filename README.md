@@ -26,5 +26,10 @@ Esse projeto é um Aplicativo Mobile para ser utilizado pelos clientes da Covil 
 Esse aplicativo consome dados da [API da Covil](https://github.com/Liendson/covil-calango-api), feita em Java.
 
 Para gerar o APK, construa a imagem e depois basta rodar o comando do Docker:
-- docker build -t ionic-apk-builder .
-- docker run --rm -v ${PWD}:/app -v ${PWD}/apk:/app/platforms/android/app/build/outputs/apk ionic-apk-builder
+
+```bash
+docker build --build-arg API_URL=https://api.exemplo.com -t ionic-apk-builder .
+docker run --rm -v ${PWD}/apk:/app/platforms/android/app/build/outputs/apk ionic-apk-builder
+```
+
+`API_URL` é a URL base da API, sem o sufixo `/api`. Se omitida, será usada `http://200.141.27.3:8081`.

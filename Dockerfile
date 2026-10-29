@@ -29,8 +29,13 @@ RUN mkdir -p /sdk/cmdline-tools && \
 # Definir o diretório de trabalho
 WORKDIR /app
 
+ARG API_URL=http://200.141.27.3:8081
+
 # Copiar o código do projeto para o contêiner
 COPY . /app
+
+# Configurar a URL da API usada na compilação de produção do aplicativo
+RUN API_URL="${API_URL}" node -e 'const fs = require("node:fs"); const file = "src/environments/environment.prod.ts"; const source = fs.readFileSync(file, "utf8"); const updated = source.replace(/url:\s*[^,]+/, "url: " + JSON.stringify(process.env.API_URL)); if (source === updated) throw new Error("Could not replace the production API URL"); fs.writeFileSync(file, updated);'
 
 # Instalar dependências do projeto
 RUN npm install
