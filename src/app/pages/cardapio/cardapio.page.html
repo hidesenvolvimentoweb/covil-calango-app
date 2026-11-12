@@ -35,7 +35,17 @@
     <section class="product-list" *ngIf="listaDeProdutosFiltrada.length">
       <ion-card class="product-card" *ngFor="let produto of listaDeProdutosFiltrada">
         <div class="product-image-container">
-          <img [attr.alt]="produto.nome" [attr.src]="produto.imagem" />
+          <img
+            *ngIf="urlImagem(produto) as url; else semImagem"
+            [attr.alt]="produto.nome"
+            [attr.src]="url"
+            loading="lazy"
+            (error)="registrarErroImagem(produto)" />
+          <ng-template #semImagem>
+            <div class="product-image-placeholder" aria-hidden="true">
+              <ion-icon [name]="getIconeCategoria(getCategoriaProduto(produto))"></ion-icon>
+            </div>
+          </ng-template>
           <div class="product-price">
             <strong>{{ produto.valor | currency: 'BRL' }}</strong>
           </div>

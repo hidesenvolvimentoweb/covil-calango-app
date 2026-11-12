@@ -5,6 +5,7 @@ import { PedidoDTO } from 'src/app/model/pedido.dto';
 import { ProdutoDTO } from 'src/app/model/produtos.dto';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { resolverUrlImagem } from 'src/app/utils/imagem.util';
 
 @Component({
   selector: 'app-modal-confirmar-pedido',
@@ -16,6 +17,7 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
   @Input()
   public produto: ProdutoDTO;
   public form: FormGroup;
+  public imagemComErro = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -24,6 +26,10 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
     private pedidoService: PedidoService,
     private storageService: StorageService
   ) { }
+
+  get urlImagem(): string | null {
+    return this.imagemComErro ? null : resolverUrlImagem(this.produto?.imagem);
+  }
 
   get quantidade() {
     return this.form?.get('quantidade');

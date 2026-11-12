@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
+import { AppComponent } from 'src/app/app.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GenericClass } from 'src/app/model/generic.class';
 import { LoginDTO } from 'src/app/model/login.dto';
@@ -12,6 +13,10 @@ import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
   styleUrls: ['./login-usuario.page.scss'],
 })
 export class LoginUsuarioPage extends GenericClass implements OnInit {
+
+  get version() {
+    return AppComponent.version;
+  }
 
   public form!: FormGroup;
   public enviando = false;

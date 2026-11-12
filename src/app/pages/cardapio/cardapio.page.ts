@@ -4,6 +4,7 @@ import { GenericClass } from 'src/app/model/generic.class';
 import { ModalConfirmarPedidoPage } from './modal-confirmar-pedido/modal-confirmar-pedido.page';
 import { ProdutoService } from 'src/app/services/produto.service';
 import { ViewWillEnter } from '@ionic/angular';
+import { resolverUrlImagem } from 'src/app/utils/imagem.util';
 
 interface CategoriaCardapio {
   nome: string;
@@ -32,6 +33,7 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
   ];
   public categoriaSelecionada = 'Todas';
   private termoPesquisa = '';
+  private imagensComErro = new Set<string | undefined>();
 
   constructor(
     public injector: Injector,
@@ -78,6 +80,15 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
   selecionarCategoria(categoria: string) {
     this.categoriaSelecionada = categoria;
     this.aplicarFiltros();
+  }
+
+  /** URL da imagem do produto, ou null quando não há imagem ou ela não pôde ser carregada. */
+  urlImagem(produto: ProdutoDTO): string | null {
+    return this.imagensComErro.has(produto.imagem) ? null : resolverUrlImagem(produto.imagem);
+  }
+
+  registrarErroImagem(produto: ProdutoDTO): void {
+    this.imagensComErro.add(produto.imagem);
   }
 
   getCategoriaProduto(produto: ProdutoDTO): string {

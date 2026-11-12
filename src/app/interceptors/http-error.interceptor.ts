@@ -27,18 +27,28 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     await alert.present();
   }
 
-  private getErrorMessage = (error: any) => {
-    switch(error.status) {
-      case 0:
-        return 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet!';
+  private getErrorMessage = (error: any): string => {
+    if (error.status === 0) {
+      return 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet!';
+    }
+    // A API devolve a mensagem pronta para exibição (ex.: "Senha incorreta").
+    const mensagemApi = error?.error?.message;
+    if (typeof mensagemApi === 'string' && mensagemApi.trim()) {
+      return mensagemApi;
+    }
+    switch (error.status) {
+      case 400:
+        return 'Os dados enviados são inválidos!';
+      case 401:
+        return 'Não autenticado!';
       case 403:
         return 'Tem certeza que você tem permissão?';
       case 404:
         return 'Recurso não encontrado!';
-      case 500:
-        return 'Erro interno do servidor!';
       default:
-        return error?.error?.message;
+        return error.status >= 500
+          ? 'Erro interno do servidor!'
+          : 'Não foi possível processar a requisição!';
     }
   };
 }

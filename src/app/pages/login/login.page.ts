@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppComponent } from 'src/app/app.component';
 import { GenericClass } from 'src/app/model/generic.class';
 import { ModalInformarNomePage } from './modal-informar-nome/modal-informar-nome.page';
 
@@ -8,6 +9,9 @@ import { ModalInformarNomePage } from './modal-informar-nome/modal-informar-nome
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage extends GenericClass {
+  get version() {
+    return AppComponent.version;
+  }
 
   async openModalInformarNome() {
     (await this.modalController.create({
