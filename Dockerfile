@@ -29,7 +29,7 @@ RUN mkdir -p /sdk/cmdline-tools && \
 # Definir o diretório de trabalho
 WORKDIR /app
 
-ARG API_URL=http://200.141.27.3:8081
+ARG API_URL=https://api.covildocalango.tech
 
 # Copiar o código do projeto para o contêiner
 COPY . /app

@@ -32,4 +32,4 @@ docker build --build-arg API_URL=https://api.exemplo.com -t ionic-apk-builder .
 docker run --rm -v ${PWD}/apk:/app/platforms/android/app/build/outputs/apk ionic-apk-builder
 ```
 
-`API_URL` é a URL base da API, sem o sufixo `/api`. Se omitida, será usada `http://200.141.27.3:8081`.
+`API_URL` é a URL base da API, sem o sufixo `/api`. Se omitida, será usada `https://api.covildocalango.tech`.
