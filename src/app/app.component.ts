@@ -3,6 +3,7 @@ import { ModalController, Platform } from '@ionic/angular';
 import { KEY_USUARIO, StorageService } from './services/storage.service';
 import { WebsocketService } from './services/websocket.service';
 import { SessaoService } from './services/sessao.service';
+import { ModalHistoricoService } from './services/modal-historico.service';
 import packageJson from '../../package.json';
 
 /**
@@ -25,7 +26,8 @@ export class AppComponent implements OnInit {
     private websocketService: WebsocketService,
     private sessaoService: SessaoService,
     private platform: Platform,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private modalHistoricoService: ModalHistoricoService
   ) {
     this.usuario = this.storageService.get(KEY_USUARIO);
   }
@@ -37,6 +39,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.websocketService.createWebSocketConnection().subscribe();
     this.sessaoService.monitorarComanda();
+    this.modalHistoricoService.iniciar();
     this.configurarBotaoVoltar();
   }
 

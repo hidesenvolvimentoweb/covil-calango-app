@@ -5,6 +5,7 @@ import { ComandaDTO } from '../model/comanda.dto';
 import { fromStatusComandaEnumValue, StatusComandaEnum } from '../enums/status-comanda.enum';
 import { KEY_COMANDA, KEY_USUARIO, StorageService } from './storage.service';
 import { WebsocketService } from './websocket.service';
+import { ModalHistoricoService } from './modal-historico.service';
 
 /** Tópico do websocket que avisa quando a comanda é fechada. */
 export const topicoComanda = (numeroComanda: number | string) => `/topic/comandas/${numeroComanda}`;
@@ -24,7 +25,8 @@ export class SessaoService {
     private websocketService: WebsocketService,
     private router: Router,
     private modalController: ModalController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private modalHistoricoService: ModalHistoricoService
   ) {}
 
   static isComandaFechada(comanda?: ComandaDTO | null): boolean {
@@ -86,6 +88,9 @@ export class SessaoService {
     while (modal && await modal.dismiss()) {
       modal = await this.modalController.getTop();
     }
+    // Garante que o histórico dos modais já foi desfeito antes de navegar (senão o
+    // history.back() pendente desfaria a navegação para o login).
+    await this.modalHistoricoService.aguardarHistorico();
   }
 
 }
