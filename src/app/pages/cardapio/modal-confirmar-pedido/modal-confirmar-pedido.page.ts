@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, ModalController, ViewWillEnter } from '@ionic/angular';
 import { PedidoDTO } from 'src/app/model/pedido.dto';
@@ -6,6 +7,9 @@ import { ProdutoDTO } from 'src/app/model/produtos.dto';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { resolverUrlImagem } from 'src/app/utils/imagem.util';
+import { SessaoService } from 'src/app/services/sessao.service';
+
+const HTTP_STATUS_CONFLICT = 409;
 
 @Component({
   selector: 'app-modal-confirmar-pedido',
@@ -24,7 +28,8 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
     private alertController: AlertController,
     private modalController: ModalController,
     private pedidoService: PedidoService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private sessaoService: SessaoService
   ) { }
 
   get urlImagem(): string | null {
@@ -50,10 +55,18 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
 
   async confirmarPedido() {
     const pedido = new PedidoDTO(this.form.value);
-    this.pedidoService.save(pedido).subscribe(async r => (await this.alertController.create({
-      message: `Pedido realizado com sucesso! Acompanhe-o na aba de 'Meus Pedidos'`,
-      buttons: ['OK']
-    })).present().then(() => this.modalController.dismiss()));
+    this.pedidoService.save(pedido).subscribe({
+      next: async () => (await this.alertController.create({
+        message: `Pedido realizado com sucesso! Acompanhe-o na aba de 'Meus Pedidos'`,
+        buttons: ['OK']
+      })).present().then(() => this.modalController.dismiss()),
+      // 409: a comanda já foi finalizada. O aviso da API é exibido pelo interceptor de erros.
+      error: (error: HttpErrorResponse) => {
+        if (error.status === HTTP_STATUS_CONFLICT) {
+          void this.sessaoService.encerrarSessao();
+        }
+      }
+    });
   }
 
   addProduto() {

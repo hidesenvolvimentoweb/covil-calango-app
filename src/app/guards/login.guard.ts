@@ -2,42 +2,38 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { KEY_COMANDA, KEY_USUARIO, StorageService } from '../services/storage.service';
+import { KEY_COMANDA, StorageService } from '../services/storage.service';
 import { ComandaService } from '../services/comanda.service';
+import { SessaoService } from '../services/sessao.service';
 import { ComandaDTO } from '../model/comanda.dto';
-import { UsuarioDTO } from '../model/usuario.dto';
 
+/**
+ * Só permite acessar o app com uma comanda aberta. Comanda fechada expira a sessão
+ * e volta para a tela de geração de comanda.
+ */
 @Injectable({ providedIn: 'root' })
 export class LoginGuard implements CanActivate {
 
   constructor(
     private storageService: StorageService,
     private comandaService: ComandaService,
+    private sessaoService: SessaoService,
     private router: Router
   ) {}
 
   canActivate(): Observable<boolean> | boolean {
-    const comanda: ComandaDTO | null = this.storageService.get(KEY_COMANDA) as ComandaDTO | null;
+    const comanda = this.storageService.get<ComandaDTO>(KEY_COMANDA);
 
-    if (!comanda?.usuario) {
-      const usuario = this.storageService.get<UsuarioDTO>(KEY_USUARIO);
-      if (usuario?.perfis?.length) {
-        return true;
-      }
+    if (!comanda?.numero) {
+      void this.sessaoService.encerrarSessao();
       this.router.navigate(['login']);
       return false;
     }
 
-    if (!comanda?.numero) {
-      return true;
-    }
-
-    return this.comandaService.getByNumero(comanda?.numero).pipe(
+    return this.comandaService.getByNumero(comanda.numero).pipe(
       map(c => {
-        if (c.status === 'Fechada') {
-          this.storageService.remove(KEY_USUARIO);
-          this.storageService.remove(KEY_COMANDA);
-          this.router.navigate(['login']);
+        if (SessaoService.isComandaFechada(c)) {
+          void this.sessaoService.encerrarSessao(true);
           return false;
         }
         return true;

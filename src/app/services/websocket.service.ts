@@ -20,6 +20,8 @@ export class WebsocketService {
   private sessionSubscription: StompSubscription | null = null;
   private comandaHandlers = new Map<string, (body: string) => void>();
   private comandaSubscriptions = new Map<string, StompSubscription>();
+  private topicHandlers = new Map<string, Set<(body: string) => void>>();
+  private topicSubscriptions = new Map<string, StompSubscription>();
 
   constructor(private zone: NgZone) {}
 
@@ -48,12 +50,14 @@ export class WebsocketService {
           this.simpSessionId = undefined;
           this.sessionSubscription = null;
           this.comandaSubscriptions.clear();
+          this.topicSubscriptions.clear();
         };
         this.stompClient.connect({}, () => {
           this.sessionSubscription = this.stompClient.subscribe(TOPIC_SESSION, message => {
             this.zone.run(() => this.setSessionId(message.body));
           });
           this.subscribeToComandaTopics();
+          this.topicHandlers.forEach((_, topic) => this.subscribeToStompTopic(topic));
         }, error => {
           console.error('Erro STOMP ao conectar ao servidor:', error.headers.message, error.body);
         });
@@ -74,6 +78,30 @@ export class WebsocketService {
     this.comandaSubscriptions.get(requestId)?.unsubscribe();
     this.comandaSubscriptions.delete(requestId);
     this.comandaHandlers.delete(requestId);
+  }
+
+  /**
+   * Escuta um tópico do websocket. A inscrição é refeita automaticamente após reconexões
+   * e pode ser registrada antes da conexão estar ativa.
+   *
+   * @returns função que cancela a escuta deste handler.
+   */
+  subscribeToTopic(topic: string, handler: (body: string) => void): () => void {
+    if (!this.topicHandlers.has(topic)) {
+      this.topicHandlers.set(topic, new Set());
+    }
+    this.topicHandlers.get(topic).add(handler);
+    this.subscribeToStompTopic(topic);
+
+    return () => {
+      const handlers = this.topicHandlers.get(topic);
+      handlers?.delete(handler);
+      if (!handlers?.size) {
+        this.topicHandlers.delete(topic);
+        this.topicSubscriptions.get(topic)?.unsubscribe();
+        this.topicSubscriptions.delete(topic);
+      }
+    };
   }
 
   /**
@@ -123,6 +151,17 @@ export class WebsocketService {
       this.zone.run(() => handler(message.body));
     });
     this.comandaSubscriptions.set(requestId, subscription);
+  }
+
+  private subscribeToStompTopic(topic: string): void {
+    if (!this.stompClient?.connected || this.topicSubscriptions.has(topic)) {
+      return;
+    }
+
+    const subscription = this.stompClient.subscribe(topic, message => {
+      this.zone.run(() => this.topicHandlers.get(topic)?.forEach(handler => handler(message.body)));
+    });
+    this.topicSubscriptions.set(topic, subscription);
   }
 
 }

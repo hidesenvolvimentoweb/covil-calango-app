@@ -1,26 +1,29 @@
 import { Component, Injector } from '@angular/core';
-import { ViewWillEnter } from '@ionic/angular';
+import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { PedidoDTO } from 'src/app/model/pedido.dto';
 import { GenericClass } from 'src/app/model/generic.class';
 import { fromStatusPedidoEnumValue, StatusPedidoEnum } from 'src/app/enums/status-pedido.enum';
-import { PedidoService } from 'src/app/services/pedido.service';
+import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
 import { HttpParams } from '@angular/common/http';
 import { StorageService } from 'src/app/services/storage.service';
+import { WebsocketService } from 'src/app/services/websocket.service';
 
 @Component({
   selector: 'app-meus-pedidos',
   templateUrl: './meus-pedidos.page.html',
   styleUrls: ['./meus-pedidos.page.scss'],
 })
-export class MeusPedidosPage extends GenericClass implements ViewWillEnter {
+export class MeusPedidosPage extends GenericClass implements ViewWillEnter, ViewWillLeave {
 
   public listaMeusPedidos: PedidoDTO[] = [];
   private pedidosExpandidos = new Set<PedidoDTO>();
+  private cancelarEscutaPedidos?: () => void;
 
   constructor(
     public injector: Injector,
     private pedidosService: PedidoService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private websocketService: WebsocketService
   ) {
     super(injector);
   }
@@ -49,6 +52,33 @@ export class MeusPedidosPage extends GenericClass implements ViewWillEnter {
     this.pedidosService.getAllByParams(this.buildParams()).subscribe(res => {
       this.listaMeusPedidos = res;
       this.pedidosExpandidos.clear();
+      this.ordenarPedidosPorPrioridade();
+    });
+    this.escutarAlteracoesDosPedidos();
+  }
+
+  ionViewWillLeave(): void {
+    this.cancelarEscutaPedidos?.();
+    this.cancelarEscutaPedidos = undefined;
+  }
+
+  /**
+   * Atualiza em tempo real o status dos pedidos da comanda (Em Andamento, Pronto, Cancelado...).
+   */
+  escutarAlteracoesDosPedidos(): void {
+    const numeroComanda = this.storageService.getNumeroDaComanda();
+    if (!numeroComanda || this.cancelarEscutaPedidos) {
+      return;
+    }
+    this.websocketService.createWebSocketConnection().subscribe({ error: () => {} });
+    this.cancelarEscutaPedidos = this.websocketService.subscribeToTopic(topicoPedidosDaComanda(numeroComanda), body => {
+      const pedidoAtualizado: PedidoDTO = WebsocketService.formatResponse(body);
+      const pedido = this.listaMeusPedidos.find(p => p.id === pedidoAtualizado.id);
+      if (!pedido) {
+        return;
+      }
+      // Mantém a mesma referência para preservar o estado de expansão do card.
+      Object.assign(pedido, pedidoAtualizado);
       this.ordenarPedidosPorPrioridade();
     });
   }

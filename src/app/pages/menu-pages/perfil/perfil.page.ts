@@ -6,8 +6,8 @@ import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
 import { ComandaService } from 'src/app/services/comanda.service';
 import { ParametrosService } from 'src/app/services/parametros.service';
 import { AppComponent } from 'src/app/app.component';
-import { Platform } from '@ionic/angular';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
+import { SessaoService } from 'src/app/services/sessao.service';
 
 const PARAMETRO_REGRA_PERMANENCIA = 'PARAMETRO_REGRA_PERMANENCIA';
 const PARAMETRO_INFORMACOES_CALANGO = 'PARAMETRO_INFORMACOES_CALANGO';
@@ -27,16 +27,9 @@ export class PerfilPage extends GenericClass {
     private storageService: StorageService,
     private comandaService: ComandaService,
     private parametrosService: ParametrosService,
-    private platform: Platform
+    private sessaoService: SessaoService
   ) {
     super(injector);
-    this.platform.backButton.subscribeWithPriority(0, async () => {
-      if (this.modalAberto) {
-        await this.modalAberto.dismiss();
-      } else {
-        window.history.back();
-      }
-    });
     this.usuario = this.storageService.get(KEY_USUARIO);
   }
 
@@ -90,9 +83,7 @@ export class PerfilPage extends GenericClass {
           text: 'Certo, estou indo!',
           handler: () => {
             this.comandaService.fecharComanda(this.storageService.getNumeroDaComanda()).subscribe(() => {
-              this.storageService.remove(KEY_USUARIO);
-              this.modalController.dismiss();
-              this.router.navigate(['login']);
+              void this.sessaoService.encerrarSessao();
             });
           }
         }

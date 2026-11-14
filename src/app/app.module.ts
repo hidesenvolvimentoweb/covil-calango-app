@@ -25,7 +25,6 @@ import { HTTP_LOADER_INTERCEPTOR_PROVIDER } from './interceptors/http-loading.in
 import { HTTP_ERROR_INTERCEPTOR_PROVIDER } from './interceptors/http-error.interceptor';
 import { HTTP_AUTH_INTERCEPTOR_PROVIDER } from './interceptors/http-auth.interceptor';
 import { ModalInformarNomePage } from './pages/login/modal-informar-nome/modal-informar-nome.page';
-import { LoginUsuarioPage } from './pages/login/login-usuario/login-usuario.page';
 
 import localePt from '@angular/common/locales/pt';
 
@@ -42,7 +41,6 @@ registerLocaleData(localePt);
     AccordionHistoricoComponent,
     // Páginas
     LoginPage,
-    LoginUsuarioPage,
     HomePage,
     CardapioPage,
     PerfilPage,
@@ -58,7 +56,8 @@ registerLocaleData(localePt);
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
-    IonicModule.forRoot({ mode: 'ios' }),
+    // No modo 'ios' o Ionic não trata o botão voltar do Android por padrão: habilitado explicitamente.
+    IonicModule.forRoot({ mode: 'ios', hardwareBackButton: true }),
     AppRoutingModule,
   ],
   providers: [

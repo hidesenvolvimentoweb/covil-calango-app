@@ -8,6 +8,24 @@ import { SolicitacaoDTO } from 'src/app/model/solicitacao.dto';
 import { LoadingController } from '@ionic/angular';
 import { fromStatusSolicitacaoEnumValue, StatusSolicitacaoEnum } from 'src/app/enums/status-solicitacao.enum';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
+import { SessaoService } from 'src/app/services/sessao.service';
+
+/** Celular com DDD, com ou sem máscara: (83) 99999-9999 ou (83) 3333-3333. */
+const CELULAR_PATTERN = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+
+/** Formata os dígitos digitados como (DD) 99999-9999 ou (DD) 3333-3333. */
+const aplicarMascaraCelular = (valor: string): string => {
+  const digitos = String(valor).replace(/\D/g, '').slice(0, 11);
+  if (digitos.length <= 2) {
+    return digitos.length ? `(${digitos}` : '';
+  }
+  const ddd = digitos.slice(0, 2);
+  const numero = digitos.slice(2);
+  const corte = numero.length > 8 ? 5 : 4;
+  return numero.length > 4
+    ? `(${ddd}) ${numero.slice(0, corte)}-${numero.slice(corte)}`
+    : `(${ddd}) ${numero}`;
+};
 
 @Component({
   selector: 'app-modal-informar-nome',
@@ -26,10 +44,15 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
     private formBuilder: FormBuilder,
     private websocketService: WebsocketService,
     private storageService: StorageService,
+    private sessaoService: SessaoService,
     private loadingController: LoadingController
   ) {
     super(injector);
     this.createWebSocketConnection();
+  }
+
+  get notificarWhatsapp(): boolean {
+    return !!this.form.get('notificarWhatsapp')?.value;
   }
 
   ngOnInit(): void {
@@ -39,7 +62,27 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
   configurarForm() {
     this.form = this.formBuilder.group({
       usuario: [null, [Validators.required, Validators.minLength(3)]],
+      notificarWhatsapp: [false],
+      celular: [{ value: null, disabled: true }, [Validators.required, Validators.pattern(CELULAR_PATTERN)]],
     });
+
+    // O celular só é pedido (e validado) quando o cliente aceita receber as notificações.
+    this.form.get('notificarWhatsapp').valueChanges.subscribe((notificar: boolean) => {
+      const celular = this.form.get('celular');
+      if (notificar) {
+        celular.enable();
+        return;
+      }
+      celular.reset({ value: null, disabled: true });
+    });
+  }
+
+  formatarCelular(event: any): void {
+    const celular = this.form.get('celular');
+    const formatado = aplicarMascaraCelular(event?.target?.value ?? '');
+    if (celular.value !== formatado) {
+      celular.setValue(formatado, { emitEvent: false });
+    }
   }
 
   createWebSocketConnection() {
@@ -51,6 +94,7 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
   setarDadosResponse(res: ComandaDTO | undefined): void {
     this.storageService.set(KEY_USUARIO, res?.usuario);
     this.storageService.set(KEY_COMANDA, res);
+    this.sessaoService.monitorarComanda();
     this.router.navigate(['/home']);
   }
 
@@ -63,10 +107,7 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
         const solicitacao: SolicitacaoDTO = WebsocketService.formatResponse(body);
         void this.handleSolicitacaoResponse(solicitacao);
       });
-      this.websocketService.send('/app/solicitacao/solicitar', {
-        ...this.form.getRawValue(),
-        requestId,
-      });
+      this.websocketService.send('/app/solicitacao/solicitar', this.buildSolicitacao(requestId));
       await this.modalController.dismiss();
     } catch (error) {
       if (this.comandaRequestId) {
@@ -90,6 +131,16 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
     if (solicitacao.status === fromStatusSolicitacaoEnumValue(StatusSolicitacaoEnum.ACEITA)) {
       this.setarDadosResponse(solicitacao.comanda);
     }
+  }
+
+  private buildSolicitacao(requestId: string) {
+    const { usuario, notificarWhatsapp, celular } = this.form.getRawValue();
+    return {
+      usuario,
+      requestId,
+      notificarWhatsapp: !!notificarWhatsapp,
+      celular: notificarWhatsapp ? String(celular ?? '').replace(/\D/g, '') : null,
+    };
   }
 
   private createRequestId(): string {

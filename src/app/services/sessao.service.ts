@@ -1,0 +1,91 @@
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController, ModalController } from '@ionic/angular';
+import { ComandaDTO } from '../model/comanda.dto';
+import { fromStatusComandaEnumValue, StatusComandaEnum } from '../enums/status-comanda.enum';
+import { KEY_COMANDA, KEY_USUARIO, StorageService } from './storage.service';
+import { WebsocketService } from './websocket.service';
+
+/** Tópico do websocket que avisa quando a comanda é fechada. */
+export const topicoComanda = (numeroComanda: number | string) => `/topic/comandas/${numeroComanda}`;
+
+/**
+ * Controla a sessão do cliente, que dura enquanto a comanda estiver aberta.
+ * Quando a comanda é fechada (pelo balcão ou pelo próprio cliente), a sessão expira
+ * e o app volta para a tela de geração de comanda.
+ */
+@Injectable({ providedIn: 'root' })
+export class SessaoService {
+
+  private cancelarEscutaComanda?: () => void;
+
+  constructor(
+    private storageService: StorageService,
+    private websocketService: WebsocketService,
+    private router: Router,
+    private modalController: ModalController,
+    private alertController: AlertController
+  ) {}
+
+  static isComandaFechada(comanda?: ComandaDTO | null): boolean {
+    return comanda?.status === fromStatusComandaEnumValue(StatusComandaEnum.FECHADA);
+  }
+
+  /**
+   * Passa a escutar o fechamento da comanda atual. Se ela já estiver fechada ao se inscrever,
+   * a API avisa na hora (ex.: o aparelho estava offline no momento do fechamento).
+   */
+  monitorarComanda(): void {
+    const numeroComanda = this.storageService.getNumeroDaComanda();
+    this.pararMonitoramento();
+    if (!numeroComanda) {
+      return;
+    }
+    this.websocketService.createWebSocketConnection().subscribe({ error: () => {} });
+    this.cancelarEscutaComanda = this.websocketService.subscribeToTopic(topicoComanda(numeroComanda), body => {
+      const comanda: ComandaDTO = WebsocketService.formatResponse(body);
+      if (SessaoService.isComandaFechada(comanda)) {
+        void this.encerrarSessao(true);
+      }
+    });
+  }
+
+  /**
+   * Expira a sessão do cliente: limpa os dados da comanda e volta para a geração de comanda.
+   *
+   * @param avisarUsuario exibe o aviso de que a comanda foi finalizada.
+   */
+  async encerrarSessao(avisarUsuario = false): Promise<void> {
+    const possuiaSessao = !!this.storageService.get(KEY_COMANDA) || !!this.storageService.get(KEY_USUARIO);
+    this.pararMonitoramento();
+    this.storageService.remove(KEY_USUARIO);
+    this.storageService.remove(KEY_COMANDA);
+    if (!possuiaSessao) {
+      return;
+    }
+
+    await this.fecharModais();
+    await this.router.navigate(['login'], { replaceUrl: true });
+    if (avisarUsuario) {
+      const alert = await this.alertController.create({
+        header: 'Comanda finalizada',
+        message: 'Sua comanda foi finalizada. Para continuar, gere uma nova comanda.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    }
+  }
+
+  private pararMonitoramento(): void {
+    this.cancelarEscutaComanda?.();
+    this.cancelarEscutaComanda = undefined;
+  }
+
+  private async fecharModais(): Promise<void> {
+    let modal = await this.modalController.getTop();
+    while (modal && await modal.dismiss()) {
+      modal = await this.modalController.getTop();
+    }
+  }
+
+}

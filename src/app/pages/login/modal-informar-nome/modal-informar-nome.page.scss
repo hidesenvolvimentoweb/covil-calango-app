@@ -1,3 +1,21 @@
 ion-button {
   padding: 0 1em 0 1em;
 }
+
+.whatsapp-consent {
+  margin-top: 0.5em;
+
+  ion-checkbox {
+    margin-inline-end: 12px;
+  }
+
+  ion-label {
+    font-size: 0.9em;
+  }
+}
+
+.field-error {
+  color: var(--ion-color-danger);
+  font-size: 0.8em;
+  margin: 4px 16px 0;
+}
