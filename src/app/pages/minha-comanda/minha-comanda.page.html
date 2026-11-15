@@ -29,7 +29,7 @@
           </div>
           <div class="product-details">
             <h3>{{ pedido.produto?.nome }}</h3>
-            <p>{{ pedido.produto?.categoria || 'Produto' }}</p>
+            <p>{{ getNomeCategoria(pedido) }}</p>
           </div>
           <span class="product-quantity">{{ pedido.quantidade }}x</span>
           <strong class="product-total">

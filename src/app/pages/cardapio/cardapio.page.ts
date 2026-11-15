@@ -6,20 +6,31 @@ import { ProdutoService } from 'src/app/services/produto.service';
 import { ViewWillEnter } from '@ionic/angular';
 import { resolverUrlImagem } from 'src/app/utils/imagem.util';
 import { semLoading } from 'src/app/interceptors/http-loading.interceptor';
+import {
+  CategoriaProdutoEnum,
+  fromCategoriaProdutoEnumValue,
+  getIconeCategoriaProduto
+} from 'src/app/enums/categoria-produto.enum';
 
 /** Quantidade de itens fictícios exibidos no skeleton enquanto a tela carrega. */
 const ITENS_SKELETON = [1, 2, 3];
 
+/** Valor usado no filtro para exibir produtos de todas as categorias. */
+const TODAS = 'TODAS';
+
 interface CategoriaCardapio {
+  valor: CategoriaProdutoEnum | typeof TODAS;
   nome: string;
   icone: string;
 }
 
-const CATEGORIAS_PADRAO: CategoriaCardapio[] = [
-  { nome: 'Burguers', icone: 'fast-food-outline' },
-  { nome: 'Bebidas', icone: 'water-outline' },
-  { nome: 'Doces', icone: 'ice-cream-outline' },
-  { nome: 'Gelados', icone: 'snow-outline' }
+const CATEGORIAS_CARDAPIO: CategoriaCardapio[] = [
+  { valor: TODAS, nome: 'Todas', icone: 'apps-outline' },
+  ...Object.values(CategoriaProdutoEnum).map(valor => ({
+    valor,
+    nome: fromCategoriaProdutoEnumValue(valor),
+    icone: getIconeCategoriaProduto(valor)
+  }))
 ];
 
 @Component({
@@ -31,11 +42,8 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
 
   public listaDeProdutos: ProdutoDTO[] = [];
   public listaDeProdutosFiltrada: ProdutoDTO[] = [];
-  public categorias: CategoriaCardapio[] = [
-    { nome: 'Todas', icone: 'apps-outline' },
-    ...CATEGORIAS_PADRAO
-  ];
-  public categoriaSelecionada = 'Todas';
+  public readonly categorias = CATEGORIAS_CARDAPIO;
+  public categoriaSelecionada: CategoriaCardapio['valor'] = TODAS;
   public carregando = true;
   public readonly itensSkeleton = ITENS_SKELETON;
   private termoPesquisa = '';
@@ -61,20 +69,6 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
 
   private montarCardapio(listaDeProdutos: ProdutoDTO[]): void {
     this.listaDeProdutos = listaDeProdutos;
-    const nomesCategorias = Array.from(new Set(this.listaDeProdutos.map(produto => this.getCategoriaProduto(produto))))
-      .sort((a, b) => a.localeCompare(b, 'pt-BR'));
-    const categoriasPorChave = new Map<string, CategoriaCardapio>();
-    [...CATEGORIAS_PADRAO, ...nomesCategorias.map(nome => ({ nome, icone: this.getIconeCategoria(nome) }))]
-      .forEach(categoria => {
-        const chave = this.normalizarCategoria(categoria.nome);
-        if (!categoriasPorChave.has(chave)) {
-          categoriasPorChave.set(chave, categoria);
-        }
-      });
-    this.categorias = [
-      { nome: 'Todas', icone: 'apps-outline' },
-      ...categoriasPorChave.values()
-    ];
     this.aplicarFiltros();
   }
 
@@ -92,7 +86,7 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
     this.aplicarFiltros();
   }
 
-  selecionarCategoria(categoria: string) {
+  selecionarCategoria(categoria: CategoriaCardapio['valor']) {
     this.categoriaSelecionada = categoria;
     this.aplicarFiltros();
   }
@@ -106,55 +100,28 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
     this.imagensComErro.add(produto.imagem);
   }
 
-  getCategoriaProduto(produto: ProdutoDTO): string {
-    return produto.categoria?.trim() || 'Outros';
+  /** Categoria do produto; valores ausentes ou desconhecidos são tratados como "Outros". */
+  getCategoriaProduto(produto: ProdutoDTO): CategoriaProdutoEnum {
+    return this.normalizarCategoria(produto?.categoria);
   }
 
-  getIconeCategoria(categoria: string): string {
-    const nomeCategoria = this.normalizarCategoria(categoria);
-    if (nomeCategoria === 'hamburguers' || nomeCategoria.includes('burger')) {
-      return 'fast-food-outline';
-    }
-    if (nomeCategoria.includes('bebid') || nomeCategoria.includes('drink')) {
-      return 'water-outline';
-    }
-    if (nomeCategoria.includes('sobrem') || nomeCategoria.includes('dessert') || nomeCategoria.includes('doce') || nomeCategoria.includes('gelad')) {
-      return 'ice-cream-outline';
-    }
-    if (nomeCategoria.includes('lanche') || nomeCategoria.includes('comida') || nomeCategoria.includes('food')) {
-      return 'fast-food-outline';
-    }
-    if (nomeCategoria.includes('porção') || nomeCategoria.includes('porcao') || nomeCategoria.includes('snack')) {
-      return 'pizza-outline';
-    }
-    return 'restaurant-outline';
+  getIconeCategoria(categoria: CategoriaProdutoEnum): string {
+    return getIconeCategoriaProduto(categoria);
   }
 
   realizarPedido(produto: ProdutoDTO) {
     this.openModalConfirmarPedido(produto);
   }
 
-  private normalizarCategoria(categoria: string): string {
-    const nomeNormalizado = categoria.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    if (['hamburguer', 'hamburgueres', 'hamburguers', 'hamburgers', 'burger', 'burgers'].includes(nomeNormalizado)) {
-      return 'hamburguers';
-    }
-    if (nomeNormalizado === 'bebida') {
-      return 'bebidas';
-    }
-    if (nomeNormalizado === 'doce') {
-      return 'doces';
-    }
-    if (nomeNormalizado === 'gelado') {
-      return 'gelados';
-    }
-    return nomeNormalizado;
+  private normalizarCategoria(categoria?: string | null): CategoriaProdutoEnum {
+    const valores = Object.values(CategoriaProdutoEnum) as string[];
+    return valores.includes(categoria ?? '') ? categoria as CategoriaProdutoEnum : CategoriaProdutoEnum.OUTROS;
   }
 
   private aplicarFiltros() {
     this.listaDeProdutosFiltrada = this.listaDeProdutos.filter(produto => {
-      const correspondeCategoria = this.categoriaSelecionada === 'Todas'
-        || this.normalizarCategoria(this.getCategoriaProduto(produto)) === this.normalizarCategoria(this.categoriaSelecionada);
+      const correspondeCategoria = this.categoriaSelecionada === TODAS
+        || this.getCategoriaProduto(produto) === this.categoriaSelecionada;
       const correspondePesquisa = !this.termoPesquisa
         || (produto?.nome ?? '').toLowerCase().includes(this.termoPesquisa)
         || (produto?.ingredientes ?? '').toLowerCase().includes(this.termoPesquisa);

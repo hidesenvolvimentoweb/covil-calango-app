@@ -23,9 +23,9 @@
           class="category-chip"
           type="button"
           *ngFor="let categoria of categorias"
-          [class.selected]="categoriaSelecionada === categoria.nome"
-          [attr.aria-pressed]="categoriaSelecionada === categoria.nome"
-          (click)="selecionarCategoria(categoria.nome)">
+          [class.selected]="categoriaSelecionada === categoria.valor"
+          [attr.aria-pressed]="categoriaSelecionada === categoria.valor"
+          (click)="selecionarCategoria(categoria.valor)">
           <ion-icon [name]="categoria.icone" aria-hidden="true"></ion-icon>
           <span>{{ categoria.nome }}</span>
         </button>

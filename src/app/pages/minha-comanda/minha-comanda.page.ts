@@ -4,6 +4,7 @@ import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { GenericClass } from 'src/app/model/generic.class';
 import { PedidoDTO } from 'src/app/model/pedido.dto';
 import { StatusPedidoEnum } from 'src/app/enums/status-pedido.enum';
+import { fromCategoriaProdutoEnumValue } from 'src/app/enums/categoria-produto.enum';
 import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
@@ -57,6 +58,10 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
       error: () => (this.carregando = false)
     });
     this.escutarAlteracoesDosPedidos();
+  }
+
+  getNomeCategoria(pedido: PedidoDTO): string {
+    return fromCategoriaProdutoEnumValue(pedido.produto?.categoria) || 'Produto';
   }
 
   ionViewWillLeave(): void {
