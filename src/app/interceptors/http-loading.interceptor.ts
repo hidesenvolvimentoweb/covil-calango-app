@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpContext, HttpContextToken, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 import { finalize, switchMap } from 'rxjs/operators';
 import { LoadingController } from '@ionic/angular';
+
+/**
+ * Marca requisições que não devem exibir o loading global, pois a própria tela
+ * mostra um skeleton enquanto os dados carregam.
+ */
+export const SEM_LOADING = new HttpContextToken<boolean>(() => false);
+
+/** Opções de requisição para dispensar o loading global (a tela exibe skeleton). */
+export const semLoading = () => ({ context: new HttpContext().set(SEM_LOADING, true) });
 
 @Injectable()
 export class HttpLoadingInterceptor implements HttpInterceptor {
@@ -13,6 +22,10 @@ export class HttpLoadingInterceptor implements HttpInterceptor {
   constructor(private loadingController: LoadingController) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (req.context.get(SEM_LOADING)) {
+      return next.handle(req);
+    }
+
     const shouldShowLoading = ++this.requestCount === 1;
 
     return from(shouldShowLoading ? this.showLoading() : Promise.resolve()).pipe(

@@ -1,42 +1,43 @@
-import { Injectable } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { from, Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-import { KEY_USUARIO, StorageService } from '../services/storage.service';
-import { UsuarioDTO } from '../model/usuario.dto';
+import { Injectable, Injector } from '@angular/core';
+import {
+  HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
+} from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { KEY_TOKEN, StorageService } from '../services/storage.service';
+import { SessaoService } from '../services/sessao.service';
 
+const HTTP_STATUS_UNAUTHORIZED = 401;
+
+/**
+ * Envia o token do visitante (recebido quando o balcão aceita a solicitação de comanda) em todas as
+ * chamadas à API. Se a API responder 401 (token ausente, inválido ou expirado), a sessão é encerrada
+ * e o app volta para a geração de comanda.
+ */
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
 
-  constructor(private storageService: StorageService) {}
+  constructor(private storageService: StorageService, private injector: Injector) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return this.sendWithToken(request, next);
-  }
+    if (!request.url.startsWith(environment.url)) {
+      return next.handle(request);
+    }
+    const token = this.storageService.get<string>(KEY_TOKEN);
+    const autenticada = token
+      ? request.clone({ setHeaders: { authorization: `Bearer ${token}` } })
+      : request;
 
-  sendWithToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return this.getToken().pipe(
-      mergeMap((jogador) => {
-        const authedRequest = this.addToken(request, jogador?.comanda?.usuario);
-        return next.handle(authedRequest);
+    return next.handle(autenticada).pipe(
+      catchError((error: unknown) => {
+        if (token && error instanceof HttpErrorResponse && error.status === HTTP_STATUS_UNAUTHORIZED) {
+          // Obtido sob demanda para evitar dependência circular (HttpClient -> interceptor -> sessão).
+          void this.injector.get(SessaoService).encerrarSessao();
+        }
+        return throwError(() => error);
       })
     );
-  }
-
-  getToken(): Observable<any> {
-    return from([this.storageService.get(KEY_USUARIO)]);
-  }
-
-  addToken(request: HttpRequest<any>, usuario: UsuarioDTO): HttpRequest<any> {
-    let clonedRequest = request.clone();
-    if (usuario?.token) {
-      clonedRequest = request.clone({
-        setHeaders: {
-          authorization: `Bearer ${usuario?.token}`,
-        },
-      });
-    }
-    return clonedRequest;
   }
 }
 

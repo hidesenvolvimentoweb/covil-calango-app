@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GenericClass } from 'src/app/model/generic.class';
-import { KEY_COMANDA, KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
+import { KEY_COMANDA, KEY_TOKEN, KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { ComandaDTO } from 'src/app/model/comanda.dto';
 import { SolicitacaoDTO } from 'src/app/model/solicitacao.dto';
@@ -91,7 +91,8 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
     });
   }
 
-  setarDadosResponse(res: ComandaDTO | undefined): void {
+  setarDadosResponse(res: ComandaDTO | undefined, token?: string): void {
+    this.storageService.set(KEY_TOKEN, token);
     this.storageService.set(KEY_USUARIO, res?.usuario);
     this.storageService.set(KEY_COMANDA, res);
     this.sessaoService.monitorarComanda();
@@ -129,7 +130,7 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
     this.websocketService.unsubscribeFromComanda(requestId);
     await this.hideLoading();
     if (solicitacao.status === fromStatusSolicitacaoEnumValue(StatusSolicitacaoEnum.ACEITA)) {
-      this.setarDadosResponse(solicitacao.comanda);
+      this.setarDadosResponse(solicitacao.comanda, solicitacao.token);
     }
   }
 

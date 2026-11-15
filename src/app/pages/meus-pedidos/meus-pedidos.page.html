@@ -6,7 +6,24 @@
       <p class="intro-caption">Veja o andamento dos seus pedidos de hoje.</p>
     </header>
 
-    <section class="orders-list" *ngIf="listaMeusPedidos.length">
+    <section class="orders-list" *ngIf="carregando" aria-busy="true" aria-label="Carregando pedidos">
+      <ion-card class="order-card" *ngFor="let item of itensSkeleton">
+        <div class="order-card-heading">
+          <ion-skeleton-text animated class="order-icon skeleton-circle"></ion-skeleton-text>
+          <div class="order-title">
+            <ion-skeleton-text animated class="skeleton-line skeleton-label"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-line skeleton-title"></ion-skeleton-text>
+          </div>
+          <ion-skeleton-text animated class="skeleton-badge"></ion-skeleton-text>
+        </div>
+        <ion-card-content>
+          <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line skeleton-short"></ion-skeleton-text>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <section class="orders-list" *ngIf="!carregando && listaMeusPedidos.length">
       <ion-card
         button
         class="order-card"
@@ -84,7 +101,7 @@
       </ion-card>
     </section>
 
-    <section class="empty-state" *ngIf="!listaMeusPedidos.length">
+    <section class="empty-state" *ngIf="!carregando && !listaMeusPedidos.length">
       <div class="empty-icon">
         <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
       </div>

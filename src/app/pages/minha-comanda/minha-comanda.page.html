@@ -6,7 +6,21 @@
       <p class="intro-caption">Confira seus pedidos e o total da sua comanda.</p>
     </header>
 
-    <section class="account-orders" *ngIf="pedidos.length">
+    <section class="account-orders" *ngIf="carregando" aria-busy="true" aria-label="Carregando comanda">
+      <h2 class="section-title">Pedidos e valores</h2>
+      <article class="order-list">
+        <div class="order-item" *ngFor="let item of itensSkeleton">
+          <ion-skeleton-text animated class="product-icon skeleton-circle"></ion-skeleton-text>
+          <div class="product-details">
+            <ion-skeleton-text animated class="skeleton-line skeleton-title"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-line skeleton-label"></ion-skeleton-text>
+          </div>
+          <ion-skeleton-text animated class="skeleton-line skeleton-value"></ion-skeleton-text>
+        </div>
+      </article>
+    </section>
+
+    <section class="account-orders" *ngIf="!carregando && pedidos.length">
       <h2 class="section-title">Pedidos e valores</h2>
       <article class="order-list">
         <div class="order-item" *ngFor="let pedido of pedidos">
@@ -25,7 +39,7 @@
       </article>
     </section>
 
-    <section class="empty-state" *ngIf="!pedidos.length">
+    <section class="empty-state" *ngIf="!carregando && !pedidos.length">
       <div class="empty-icon">
         <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
       </div>
@@ -36,7 +50,8 @@
     <section class="summary-card" aria-label="Resumo da comanda">
       <div class="summary-row">
         <span>Total dos pedidos</span>
-        <strong>{{ totalComanda | currency: 'BRL' }}</strong>
+        <ion-skeleton-text *ngIf="carregando; else valorTotal" animated class="skeleton-line skeleton-value"></ion-skeleton-text>
+        <ng-template #valorTotal><strong>{{ totalComanda | currency: 'BRL' }}</strong></ng-template>
       </div>
     </section>
 

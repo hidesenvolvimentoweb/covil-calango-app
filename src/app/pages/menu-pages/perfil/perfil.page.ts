@@ -4,7 +4,6 @@ import { ModalEditarPerfilPage } from './modal-editar-perfil/modal-editar-perfil
 import { ModalInformacoesPage } from './modal-informacoes/modal-informacoes.page';
 import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
 import { ComandaService } from 'src/app/services/comanda.service';
-import { ParametrosService } from 'src/app/services/parametros.service';
 import { AppComponent } from 'src/app/app.component';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
 import { SessaoService } from 'src/app/services/sessao.service';
@@ -26,7 +25,6 @@ export class PerfilPage extends GenericClass {
     public injector: Injector,
     private storageService: StorageService,
     private comandaService: ComandaService,
-    private parametrosService: ParametrosService,
     private sessaoService: SessaoService
   ) {
     super(injector);
@@ -45,34 +43,23 @@ export class PerfilPage extends GenericClass {
     })).present();
   }
 
-  async openModalRegrasPermanencia() {
-    this.parametrosService.getByName(PARAMETRO_REGRA_PERMANENCIA).subscribe(async res => {
-      this.modalAberto  = await this.modalController.create({
-        component: ModalInformacoesPage,
-        breakpoints: [0.8, 1],
-        initialBreakpoint: 0.8,
-        componentProps: {
-          title: 'Regras de Permanência',
-          content: res.descricao
-        }
-      });
-      await this.modalAberto.present();
-    });
+  openModalRegrasPermanencia() {
+    return this.openModalInformacoes('Regras de Permanência', PARAMETRO_REGRA_PERMANENCIA);
   }
 
-  async openModalInformacoesCalango() {
-    this.parametrosService.getByName(PARAMETRO_INFORMACOES_CALANGO).subscribe(async res => {
-      this.modalAberto = await this.modalController.create({
-        component: ModalInformacoesPage,
-        breakpoints: [0.8, 1],
-        initialBreakpoint: 0.8,
-        componentProps: {
-          title: 'Sobre a Covil',
-          content: res.descricao
-        }
-      });
-      await this.modalAberto.present();
+  openModalInformacoesCalango() {
+    return this.openModalInformacoes('Sobre a Covil', PARAMETRO_INFORMACOES_CALANGO);
+  }
+
+  /** Abre o modal na hora; o conteúdo é carregado nele, exibindo skeleton enquanto isso. */
+  private async openModalInformacoes(title: string, nomeParametro: string) {
+    this.modalAberto = await this.modalController.create({
+      component: ModalInformacoesPage,
+      breakpoints: [0.8, 1],
+      initialBreakpoint: 0.8,
+      componentProps: { title, nomeParametro }
     });
+    await this.modalAberto.present();
   }
 
   async sair() {

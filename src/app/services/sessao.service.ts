@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController, ModalController } from '@ionic/angular';
 import { ComandaDTO } from '../model/comanda.dto';
 import { fromStatusComandaEnumValue, StatusComandaEnum } from '../enums/status-comanda.enum';
-import { KEY_COMANDA, KEY_USUARIO, StorageService } from './storage.service';
+import { KEY_COMANDA, KEY_TOKEN, KEY_USUARIO, StorageService } from './storage.service';
 import { WebsocketService } from './websocket.service';
 import { ModalHistoricoService } from './modal-historico.service';
 
@@ -62,6 +62,7 @@ export class SessaoService {
     this.pararMonitoramento();
     this.storageService.remove(KEY_USUARIO);
     this.storageService.remove(KEY_COMANDA);
+    this.storageService.remove(KEY_TOKEN);
     if (!possuiaSessao) {
       return;
     }

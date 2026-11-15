@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
@@ -20,8 +20,8 @@ export abstract class AbstractGenericClass {
     return this.httpClient.delete<void>(`${this.urlController}/${id}`);
   }
 
-  getAll<T>(): Observable<T[]> {
-    return this.httpClient.get<T[]>(`${this.urlController}`);
+  getAll<T>(opcoes?: { context?: HttpContext }): Observable<T[]> {
+    return this.httpClient.get<T[]>(`${this.urlController}`, opcoes);
   }
 
   getById<T>(id: number): Observable<T> {

@@ -8,6 +8,9 @@ import { HttpParams } from '@angular/common/http';
 import { StorageService } from 'src/app/services/storage.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
 
+/** Quantidade de itens fictícios exibidos no skeleton enquanto a tela carrega. */
+const ITENS_SKELETON = [1, 2, 3];
+
 @Component({
   selector: 'app-meus-pedidos',
   templateUrl: './meus-pedidos.page.html',
@@ -16,6 +19,8 @@ import { WebsocketService } from 'src/app/services/websocket.service';
 export class MeusPedidosPage extends GenericClass implements ViewWillEnter, ViewWillLeave {
 
   public listaMeusPedidos: PedidoDTO[] = [];
+  public carregando = true;
+  public readonly itensSkeleton = ITENS_SKELETON;
   private pedidosExpandidos = new Set<PedidoDTO>();
   private cancelarEscutaPedidos?: () => void;
 
@@ -49,10 +54,15 @@ export class MeusPedidosPage extends GenericClass implements ViewWillEnter, View
   }
 
   ionViewWillEnter(): void {
-    this.pedidosService.getAllByParams(this.buildParams()).subscribe(res => {
-      this.listaMeusPedidos = res;
-      this.pedidosExpandidos.clear();
-      this.ordenarPedidosPorPrioridade();
+    this.carregando = true;
+    this.pedidosService.getAllByParams(this.buildParams()).subscribe({
+      next: res => {
+        this.listaMeusPedidos = res;
+        this.pedidosExpandidos.clear();
+        this.ordenarPedidosPorPrioridade();
+        this.carregando = false;
+      },
+      error: () => (this.carregando = false)
     });
     this.escutarAlteracoesDosPedidos();
   }

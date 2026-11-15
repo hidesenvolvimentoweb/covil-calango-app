@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 
 export const KEY_USUARIO = 'USUARIO';
 export const KEY_COMANDA = 'COMANDA';
+/** Token do visitante, enviado no cabeçalho Authorization das chamadas à API. */
+export const KEY_TOKEN = 'TOKEN';
 
 @Injectable({
   providedIn: 'root'

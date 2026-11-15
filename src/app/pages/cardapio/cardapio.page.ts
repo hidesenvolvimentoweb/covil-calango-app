@@ -5,6 +5,10 @@ import { ModalConfirmarPedidoPage } from './modal-confirmar-pedido/modal-confirm
 import { ProdutoService } from 'src/app/services/produto.service';
 import { ViewWillEnter } from '@ionic/angular';
 import { resolverUrlImagem } from 'src/app/utils/imagem.util';
+import { semLoading } from 'src/app/interceptors/http-loading.interceptor';
+
+/** Quantidade de itens fictícios exibidos no skeleton enquanto a tela carrega. */
+const ITENS_SKELETON = [1, 2, 3];
 
 interface CategoriaCardapio {
   nome: string;
@@ -32,6 +36,8 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
     ...CATEGORIAS_PADRAO
   ];
   public categoriaSelecionada = 'Todas';
+  public carregando = true;
+  public readonly itensSkeleton = ITENS_SKELETON;
   private termoPesquisa = '';
   private imagensComErro = new Set<string | undefined>();
 
@@ -43,24 +49,33 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
-    this.produtoService.getAll().subscribe((listaDeProdutos: unknown[]) => {
-      this.listaDeProdutos = listaDeProdutos as ProdutoDTO[];
-      const nomesCategorias = Array.from(new Set(this.listaDeProdutos.map(produto => this.getCategoriaProduto(produto))))
-        .sort((a, b) => a.localeCompare(b, 'pt-BR'));
-      const categoriasPorChave = new Map<string, CategoriaCardapio>();
-      [...CATEGORIAS_PADRAO, ...nomesCategorias.map(nome => ({ nome, icone: this.getIconeCategoria(nome) }))]
-        .forEach(categoria => {
-          const chave = this.normalizarCategoria(categoria.nome);
-          if (!categoriasPorChave.has(chave)) {
-            categoriasPorChave.set(chave, categoria);
-          }
-        });
-      this.categorias = [
-        { nome: 'Todas', icone: 'apps-outline' },
-        ...categoriasPorChave.values()
-      ];
-      this.aplicarFiltros();
+    this.carregando = true;
+    this.produtoService.getAll(semLoading()).subscribe({
+      next: (listaDeProdutos: unknown[]) => {
+        this.montarCardapio(listaDeProdutos as ProdutoDTO[]);
+        this.carregando = false;
+      },
+      error: () => (this.carregando = false)
     });
+  }
+
+  private montarCardapio(listaDeProdutos: ProdutoDTO[]): void {
+    this.listaDeProdutos = listaDeProdutos;
+    const nomesCategorias = Array.from(new Set(this.listaDeProdutos.map(produto => this.getCategoriaProduto(produto))))
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    const categoriasPorChave = new Map<string, CategoriaCardapio>();
+    [...CATEGORIAS_PADRAO, ...nomesCategorias.map(nome => ({ nome, icone: this.getIconeCategoria(nome) }))]
+      .forEach(categoria => {
+        const chave = this.normalizarCategoria(categoria.nome);
+        if (!categoriasPorChave.has(chave)) {
+          categoriasPorChave.set(chave, categoria);
+        }
+      });
+    this.categorias = [
+      { nome: 'Todas', icone: 'apps-outline' },
+      ...categoriasPorChave.values()
+    ];
+    this.aplicarFiltros();
   }
 
   async openModalConfirmarPedido(produto: ProdutoDTO) {

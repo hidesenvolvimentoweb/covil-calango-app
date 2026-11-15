@@ -15,6 +15,9 @@ const STATUS_CONTABILIZADOS: string[] = [
   StatusPedidoEnum.FINALIZADO
 ];
 
+/** Quantidade de itens fictícios exibidos no skeleton enquanto a tela carrega. */
+const ITENS_SKELETON = [1, 2, 3];
+
 @Component({
   selector: 'app-minha-comanda',
   templateUrl: './minha-comanda.page.html',
@@ -23,6 +26,8 @@ const STATUS_CONTABILIZADOS: string[] = [
 export class MinhaComandaPage extends GenericClass implements ViewWillEnter, ViewWillLeave {
 
   public pedidos: PedidoDTO[] = [];
+  public carregando = true;
+  public readonly itensSkeleton = ITENS_SKELETON;
   private cancelarEscutaPedidos?: () => void;
 
   constructor(
@@ -43,8 +48,13 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
   }
 
   ionViewWillEnter(): void {
-    this.pedidosService.getAllByParams(this.buildParams()).subscribe(pedidos => {
-      this.pedidos = pedidos;
+    this.carregando = true;
+    this.pedidosService.getAllByParams(this.buildParams()).subscribe({
+      next: pedidos => {
+        this.pedidos = pedidos;
+        this.carregando = false;
+      },
+      error: () => (this.carregando = false)
     });
     this.escutarAlteracoesDosPedidos();
   }

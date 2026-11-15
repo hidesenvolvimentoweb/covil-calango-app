@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { KEY_COMANDA, StorageService } from '../services/storage.service';
+import { KEY_COMANDA, KEY_TOKEN, StorageService } from '../services/storage.service';
 import { ComandaService } from '../services/comanda.service';
 import { SessaoService } from '../services/sessao.service';
 import { ComandaDTO } from '../model/comanda.dto';
@@ -24,7 +24,8 @@ export class LoginGuard implements CanActivate {
   canActivate(): Observable<boolean> | boolean {
     const comanda = this.storageService.get<ComandaDTO>(KEY_COMANDA);
 
-    if (!comanda?.numero) {
+    // Sem token (ex.: sessão criada antes da autenticação do app) a API recusaria as chamadas.
+    if (!comanda?.numero || !this.storageService.get<string>(KEY_TOKEN)) {
       void this.sessaoService.encerrarSessao();
       this.router.navigate(['login']);
       return false;

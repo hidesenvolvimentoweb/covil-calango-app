@@ -57,3 +57,26 @@
   display: flex;
   justify-content: center;
 }
+
+/* Skeleton exibido enquanto as telas carregam (substitui o loading global após gerar a comanda) */
+ion-skeleton-text {
+  --background: rgba(82, 99, 66, 0.1);
+  --background-rgb: 82, 99, 66;
+  --border-radius: 0.5rem;
+  margin: 0 0 0.55rem;
+  line-height: 1;
+}
+
+ion-skeleton-text:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-line { width: 100%; height: 0.85rem; }
+.skeleton-title { width: 65%; height: 1.15rem; }
+.skeleton-label { width: 35%; height: 0.65rem; }
+.skeleton-short { width: 55%; }
+.skeleton-value { flex: 0 0 4.5rem; width: 4.5rem; height: 1rem; margin: 0; }
+.skeleton-badge { flex: 0 0 5rem; width: 5rem; height: 1.6rem; margin: 0; --border-radius: 999px; }
+.skeleton-circle { margin: 0; --border-radius: 50%; }
+.skeleton-image { width: 100%; height: 100%; margin: 0; --border-radius: 0; }
+.skeleton-button { width: 100%; height: 2.6rem; margin-top: 1rem; --border-radius: 0.75rem; }

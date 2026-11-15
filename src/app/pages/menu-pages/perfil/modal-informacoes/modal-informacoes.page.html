@@ -5,7 +5,15 @@
     </div>
     <section class="information-card">
       <p class="eyebrow">COVIL DO CALANGO</p>
-      <p class="information-copy">{{ content }}</p>
+      <div *ngIf="carregando; else conteudo" aria-busy="true" aria-label="Carregando informações">
+        <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skeleton-line skeleton-short"></ion-skeleton-text>
+      </div>
+      <ng-template #conteudo>
+        <p class="information-copy">{{ content }}</p>
+      </ng-template>
     </section>
   </main>
 </ion-content>

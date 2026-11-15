@@ -32,7 +32,24 @@
       </div>
     </section>
 
-    <section class="product-list" *ngIf="listaDeProdutosFiltrada.length">
+    <section class="product-list" *ngIf="carregando" aria-busy="true" aria-label="Carregando produtos">
+      <ion-card class="product-card" *ngFor="let item of itensSkeleton">
+        <div class="product-image-container">
+          <ion-skeleton-text animated class="skeleton-image"></ion-skeleton-text>
+        </div>
+        <ion-card-header>
+          <ion-skeleton-text animated class="skeleton-line skeleton-title"></ion-skeleton-text>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-skeleton-text animated class="skeleton-line skeleton-label"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line skeleton-short"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-button"></ion-skeleton-text>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <section class="product-list" *ngIf="!carregando && listaDeProdutosFiltrada.length">
       <ion-card class="product-card" *ngFor="let produto of listaDeProdutosFiltrada">
         <div class="product-image-container">
           <img
@@ -64,7 +81,7 @@
       </ion-card>
     </section>
 
-    <section class="empty-state" *ngIf="!listaDeProdutosFiltrada.length">
+    <section class="empty-state" *ngIf="!carregando && !listaDeProdutosFiltrada.length">
       <div class="empty-icon">
         <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
       </div>

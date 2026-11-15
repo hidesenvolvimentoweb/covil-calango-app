@@ -6,4 +6,6 @@ export class SolicitacaoDTO {
   public nome?: string;
   public comanda?: ComandaDTO;
   public status?: string;
+  /** Token do visitante, presente quando a solicitação é aceita. */
+  public token?: string;
 }
