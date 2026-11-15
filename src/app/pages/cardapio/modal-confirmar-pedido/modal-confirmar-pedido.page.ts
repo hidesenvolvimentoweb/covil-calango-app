@@ -10,6 +10,8 @@ import { resolverUrlImagem } from 'src/app/utils/imagem.util';
 import { SessaoService } from 'src/app/services/sessao.service';
 
 const HTTP_STATUS_CONFLICT = 409;
+/** Mesmo limite validado pela API (PedidoService.QUANTIDADE_MAXIMA). */
+export const QUANTIDADE_MAXIMA = 20;
 
 @Component({
   selector: 'app-modal-confirmar-pedido',
@@ -22,6 +24,7 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
   public produto: ProdutoDTO;
   public form: FormGroup;
   public imagemComErro = false;
+  public readonly quantidadeMaxima = QUANTIDADE_MAXIMA;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -46,7 +49,7 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
 
   configurarForm() {
     this.form = this.formBuilder.group({
-      quantidade: [1, Validators.required],
+      quantidade: [1, [Validators.required, Validators.min(1), Validators.max(QUANTIDADE_MAXIMA)]],
       observacao: [null],
       produto: [this.produto, Validators.required],
       comanda: [this.storageService.getNumeroDaComanda(), Validators.required]
@@ -54,6 +57,10 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
   }
 
   async confirmarPedido() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     const pedido = new PedidoDTO(this.form.value);
     this.pedidoService.save(pedido).subscribe({
       next: async () => (await this.alertController.create({
@@ -70,8 +77,10 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
   }
 
   addProduto() {
-    let quantidadeAtual = this.quantidade.value;
-    this.quantidade.setValue(++quantidadeAtual);
+    const quantidadeAtual = Number(this.quantidade.value) || 0;
+    if (quantidadeAtual < QUANTIDADE_MAXIMA) {
+      this.quantidade.setValue(quantidadeAtual + 1);
+    }
   }
 
   removerProduto() {

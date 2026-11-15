@@ -3,6 +3,7 @@ import * as SockJS from 'sockjs-client';
 import { CompatClient, Stomp, StompSubscription } from '@stomp/stompjs';
 import { environment } from 'src/environments/environment';
 import { Observable, Observer, of } from 'rxjs';
+import { KEY_TOKEN, StorageService } from './storage.service';
 
 const TOPIC_SESSION = '/topic/session/*';
 const RECONNECT_DELAY = 5000;
@@ -23,7 +24,7 @@ export class WebsocketService {
   private topicHandlers = new Map<string, Set<(body: string) => void>>();
   private topicSubscriptions = new Map<string, StompSubscription>();
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone, private storageService: StorageService) {}
 
   static formatResponse(body: string) {
     return JSON.parse(body);
@@ -46,6 +47,10 @@ export class WebsocketService {
         this.stompClient = Stomp.over(() => new SockJS(`${environment.url}/covil-ws`));
         this.stompClient.reconnectDelay = RECONNECT_DELAY;
         this.stompClient.connectionTimeout = 10000;
+        // Lido a cada (re)conexão: o token do visitante só existe depois que a solicitação é aceita.
+        this.stompClient.beforeConnect = () => {
+          this.stompClient.connectHeaders = this.authHeaders();
+        };
         this.stompClient.onWebSocketClose = () => {
           this.simpSessionId = undefined;
           this.sessionSubscription = null;
@@ -158,10 +163,16 @@ export class WebsocketService {
       return;
     }
 
+    // A API autoriza a inscrição nos tópicos da comanda pelo token do visitante enviado no próprio SUBSCRIBE.
     const subscription = this.stompClient.subscribe(topic, message => {
       this.zone.run(() => this.topicHandlers.get(topic)?.forEach(handler => handler(message.body)));
-    });
+    }, this.authHeaders());
     this.topicSubscriptions.set(topic, subscription);
+  }
+
+  private authHeaders(): { [key: string]: string } {
+    const token = this.storageService.get<string>(KEY_TOKEN);
+    return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
 }
