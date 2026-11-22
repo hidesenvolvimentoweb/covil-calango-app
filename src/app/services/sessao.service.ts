@@ -12,13 +12,14 @@ export const topicoComanda = (numeroComanda: number | string) => `/topic/comanda
 
 /**
  * Controla a sessão do cliente, que dura enquanto a comanda estiver aberta.
- * Quando a comanda é fechada (pelo balcão ou pelo próprio cliente), a sessão expira
- * e o app volta para a tela de geração de comanda.
+ * Quando a comanda é fechada (pelo pagamento no app ou pela equipe no balcão), a sessão expira
+ * e o app volta para a tela de geração de comanda. O cliente não fecha a comanda sem pagar.
  */
 @Injectable({ providedIn: 'root' })
 export class SessaoService {
 
   private cancelarEscutaComanda?: () => void;
+  private tratamentoDoFechamento?: () => void;
 
   constructor(
     private storageService: StorageService,
@@ -46,10 +47,25 @@ export class SessaoService {
     this.websocketService.createWebSocketConnection().subscribe({ error: () => {} });
     this.cancelarEscutaComanda = this.websocketService.subscribeToTopic(topicoComanda(numeroComanda), body => {
       const comanda: ComandaDTO = WebsocketService.formatResponse(body);
-      if (SessaoService.isComandaFechada(comanda)) {
+      if (!SessaoService.isComandaFechada(comanda)) {
+        return;
+      }
+      if (this.tratamentoDoFechamento) {
+        this.tratamentoDoFechamento();
+      } else {
         void this.encerrarSessao(true);
       }
     });
+  }
+
+  /**
+   * Substitui o tratamento padrão do fechamento da comanda (aviso genérico e volta ao login). Usado pelo
+   * pagamento: com o PIX aprovado a comanda fecha, e a tela de pagamento exibe a confirmação antes de encerrar.
+   *
+   * @param tratamento undefined restaura o tratamento padrão.
+   */
+  definirTratamentoDoFechamento(tratamento?: () => void): void {
+    this.tratamentoDoFechamento = tratamento;
   }
 
   /**
@@ -60,6 +76,7 @@ export class SessaoService {
   async encerrarSessao(avisarUsuario = false): Promise<void> {
     const possuiaSessao = !!this.storageService.get(KEY_COMANDA) || !!this.storageService.get(KEY_USUARIO);
     this.pararMonitoramento();
+    this.tratamentoDoFechamento = undefined;
     this.storageService.remove(KEY_USUARIO);
     this.storageService.remove(KEY_COMANDA);
     this.storageService.remove(KEY_TOKEN);

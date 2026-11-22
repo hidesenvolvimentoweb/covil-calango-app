@@ -3,10 +3,8 @@ import { GenericClass } from 'src/app/model/generic.class';
 import { ModalEditarPerfilPage } from './modal-editar-perfil/modal-editar-perfil.page';
 import { ModalInformacoesPage } from './modal-informacoes/modal-informacoes.page';
 import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
-import { ComandaService } from 'src/app/services/comanda.service';
 import { AppComponent } from 'src/app/app.component';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
-import { SessaoService } from 'src/app/services/sessao.service';
 
 const PARAMETRO_REGRA_PERMANENCIA = 'PARAMETRO_REGRA_PERMANENCIA';
 const PARAMETRO_INFORMACOES_CALANGO = 'PARAMETRO_INFORMACOES_CALANGO';
@@ -23,9 +21,7 @@ export class PerfilPage extends GenericClass {
 
   constructor(
     public injector: Injector,
-    private storageService: StorageService,
-    private comandaService: ComandaService,
-    private sessaoService: SessaoService
+    private storageService: StorageService
   ) {
     super(injector);
     this.usuario = this.storageService.get(KEY_USUARIO);
@@ -60,23 +56,6 @@ export class PerfilPage extends GenericClass {
       componentProps: { title, nomeParametro }
     });
     await this.modalAberto.present();
-  }
-
-  async sair() {
-    const alert = await this.alertController.create({
-      message: `Ao sair, sua comanda será encerrada, vá até ao balcão para realizar o pagamento, ok?`,
-      buttons: [
-        {
-          text: 'Certo, estou indo!',
-          handler: () => {
-            this.comandaService.fecharComanda(this.storageService.getNumeroDaComanda()).subscribe(() => {
-              void this.sessaoService.encerrarSessao();
-            });
-          }
-        }
-      ]
-    });
-    await alert.present();
   }
 
 }

@@ -8,6 +8,9 @@ import { fromCategoriaProdutoEnumValue } from 'src/app/enums/categoria-produto.e
 import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
+import { PagamentoService } from 'src/app/services/pagamento.service';
+import { StatusPagamentoEnum } from 'src/app/enums/status-pagamento.enum';
+import { ModalPagamentoPixPage } from './modal-pagamento-pix/modal-pagamento-pix.page';
 
 const STATUS_CONTABILIZADOS: string[] = [
   StatusPedidoEnum.SOLICITADO,
@@ -28,12 +31,14 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
 
   public pedidos: PedidoDTO[] = [];
   public carregando = true;
+  public pixPendente = false;
   public readonly itensSkeleton = ITENS_SKELETON;
   private cancelarEscutaPedidos?: () => void;
 
   constructor(
     public injector: Injector,
     private pedidosService: PedidoService,
+    private pagamentoService: PagamentoService,
     private storageService: StorageService,
     private websocketService: WebsocketService
   ) {
@@ -50,6 +55,7 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
 
   ionViewWillEnter(): void {
     this.carregando = true;
+    this.verificarPixPendente();
     this.pedidosService.getAllByParams(this.buildParams()).subscribe({
       next: pedidos => {
         this.pedidos = pedidos;
@@ -58,6 +64,17 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
       error: () => (this.carregando = false)
     });
     this.escutarAlteracoesDosPedidos();
+  }
+
+  /** Abre o pagamento via PIX; o valor cobrado é calculado pela API. */
+  async pagarComPix(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: ModalPagamentoPixPage,
+      breakpoints: [0.95, 1],
+      initialBreakpoint: 0.95
+    });
+    void modal.onDidDismiss().then(() => this.verificarPixPendente());
+    await modal.present();
   }
 
   getNomeCategoria(pedido: PedidoDTO): string {
@@ -100,6 +117,18 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
     params = params.append('dataHora', dataInicial.toISOString());
     params = params.append('comanda', this.storageService.getNumeroDaComanda());
     return params;
+  }
+
+  /** Um PIX gerado e ainda não pago muda o texto do botão (o cliente pode ter fechado o modal sem pagar). */
+  private verificarPixPendente(): void {
+    const numeroComanda = this.storageService.getNumeroDaComanda();
+    if (!numeroComanda) {
+      return;
+    }
+    this.pagamentoService.consultar(numeroComanda).subscribe({
+      next: pagamento => (this.pixPendente = pagamento?.status === StatusPagamentoEnum.PENDENTE),
+      error: () => (this.pixPendente = false)
+    });
   }
 
 }

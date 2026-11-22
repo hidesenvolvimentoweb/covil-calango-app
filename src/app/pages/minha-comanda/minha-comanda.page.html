@@ -55,9 +55,17 @@
       </div>
     </section>
 
-    <!-- <ion-button class="account-action" expand="block" color="primary">
-      Finalizar Comanda
-      <ion-icon slot="end" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
-    </ion-button> -->
+    <ion-button
+      class="account-action"
+      expand="block"
+      color="primary"
+      [disabled]="carregando || totalComanda <= 0"
+      (click)="pagarComPix()">
+      {{ pixPendente ? 'Ver PIX pendente' : 'Pagar com PIX' }}
+      <ion-icon slot="end" name="qr-code-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+    <p class="account-hint">
+      O pagamento encerra sua comanda. Se preferir, pague no balcão.
+    </p>
   </main>
 </ion-content>

@@ -8,6 +8,7 @@ import { PedidoService } from 'src/app/services/pedido.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { resolverUrlImagem } from 'src/app/utils/imagem.util';
 import { SessaoService } from 'src/app/services/sessao.service';
+import { ComandaService } from 'src/app/services/comanda.service';
 
 const HTTP_STATUS_CONFLICT = 409;
 /** Mesmo limite validado pela API (PedidoService.QUANTIDADE_MAXIMA). */
@@ -32,7 +33,8 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
     private modalController: ModalController,
     private pedidoService: PedidoService,
     private storageService: StorageService,
-    private sessaoService: SessaoService
+    private sessaoService: SessaoService,
+    private comandaService: ComandaService
   ) { }
 
   get urlImagem(): string | null {
@@ -67,10 +69,11 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
         message: `Pedido realizado com sucesso! Acompanhe-o na aba de 'Meus Pedidos'`,
         buttons: ['OK']
       })).present().then(() => this.modalController.dismiss()),
-      // 409: a comanda já foi finalizada. O aviso da API é exibido pelo interceptor de erros.
+      // 409: a comanda foi finalizada ou há um PIX pendente (pedidos bloqueados até pagar ou cancelar).
+      // O aviso da API é exibido pelo interceptor de erros; a sessão só expira se a comanda estiver fechada.
       error: (error: HttpErrorResponse) => {
         if (error.status === HTTP_STATUS_CONFLICT) {
-          void this.sessaoService.encerrarSessao();
+          this.encerrarSessaoSeComandaFechada();
         }
       }
     });
@@ -88,6 +91,19 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
     if (quantidadeAtual > 1) {
       this.quantidade.setValue(--quantidadeAtual);
     }
+  }
+
+  private encerrarSessaoSeComandaFechada(): void {
+    this.comandaService.getByNumero(this.storageService.getNumeroDaComanda()).subscribe({
+      next: comanda => {
+        if (SessaoService.isComandaFechada(comanda)) {
+          void this.sessaoService.encerrarSessao();
+        } else {
+          void this.modalController.dismiss();
+        }
+      },
+      error: () => {}
+    });
   }
 
 }

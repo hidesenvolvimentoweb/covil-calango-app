@@ -1,0 +1,115 @@
+<ion-content class="payment-content">
+  <main class="payment-page">
+    <p class="eyebrow">FECHAR COMANDA</p>
+    <h1>Pague com PIX</h1>
+
+    <!-- Gerando o PIX -->
+    <section class="payment-card" *ngIf="etapa === 'gerando'" aria-busy="true" aria-label="Gerando o PIX">
+      <ion-skeleton-text animated class="skeleton-line skeleton-amount"></ion-skeleton-text>
+      <ion-skeleton-text animated class="qr-frame skeleton-qr"></ion-skeleton-text>
+      <p class="payment-caption">Gerando seu PIX...</p>
+    </section>
+
+    <!-- Aguardando o pagamento -->
+    <ng-container *ngIf="etapa === 'pendente' && pagamento">
+      <section class="payment-card" aria-label="PIX para pagamento">
+        <div class="amount-row">
+          <span>Total a pagar</span>
+          <strong>{{ pagamento.valor | currency: 'BRL' }}</strong>
+        </div>
+
+        <div class="qr-frame">
+          <img *ngIf="urlQrCode as url" [src]="url" alt="QR Code do PIX da comanda" />
+        </div>
+
+        <p class="expiration" [class.expiring]="expirando" *ngIf="tempoRestante" aria-live="polite">
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+          Expira em <strong>{{ tempoRestante }}</strong>
+        </p>
+
+        <ion-button class="copy-button" expand="block" fill="outline" color="primary" (click)="copiarCodigo()">
+          <ion-icon slot="start" [name]="copiado ? 'checkmark-outline' : 'copy-outline'" aria-hidden="true"></ion-icon>
+          {{ copiado ? 'Código copiado!' : 'Copiar código PIX' }}
+        </ion-button>
+
+        <div class="waiting" aria-live="polite">
+          <ion-spinner name="dots" aria-hidden="true"></ion-spinner>
+          <span>Aguardando pagamento</span>
+        </div>
+      </section>
+
+      <ol class="steps" aria-label="Como pagar">
+        <li>Abra o app do seu banco e escolha pagar com PIX.</li>
+        <li>Escaneie o QR Code ou use o código copiado.</li>
+        <li>Pronto! A confirmação aparece aqui na hora.</li>
+      </ol>
+
+      <p class="payment-note">
+        Enquanto o PIX estiver aberto, novos pedidos ficam bloqueados. Quer pedir mais alguma coisa? Cancele o PIX.
+      </p>
+
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="fechar()">Voltar à comanda</ion-button>
+        <ion-button expand="block" fill="clear" color="danger" [disabled]="cancelando" (click)="cancelarPix()">
+          Cancelar PIX
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Pago -->
+    <ng-container *ngIf="etapa === 'pago'">
+      <section class="payment-card payment-result success" aria-live="assertive">
+        <div class="result-icon">
+          <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Pagamento confirmado!</h2>
+        <p>
+          Recebemos <strong>{{ pagamento?.valor | currency: 'BRL' }}</strong> e sua comanda foi encerrada.
+          Obrigado pela visita, volte sempre ao Covil!
+        </p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="fechar()">
+          Concluir
+          <ion-icon slot="end" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- PIX expirado, cancelado ou estornado -->
+    <ng-container *ngIf="etapa === 'encerrado'">
+      <section class="payment-card payment-result">
+        <div class="result-icon muted">
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>{{ tituloEncerrado }}</h2>
+        <p>Gere um novo PIX para pagar sua comanda ou, se preferir, pague no balcão.</p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="gerarPix()">
+          Gerar novo PIX
+          <ion-icon slot="end" name="refresh-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Erro ao gerar -->
+    <ng-container *ngIf="etapa === 'erro'">
+      <section class="payment-card payment-result">
+        <div class="result-icon muted">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Não foi possível gerar o PIX</h2>
+        <p>Tente novamente em instantes ou, se preferir, pague no balcão.</p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="gerarPix()">
+          Tentar novamente
+          <ion-icon slot="end" name="refresh-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+  </main>
+</ion-content>

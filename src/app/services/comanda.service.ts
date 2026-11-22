@@ -13,10 +13,6 @@ export class ComandaService extends AbstractGenericClass {
     return this.httpClient.get<ComandaDTO>(`${this.urlController}/gerar/${nome}`);
   }
 
-  fecharComanda(numero: number | string, body?: any) {
-    return this.httpClient.put<ComandaDTO>(`${this.urlController}/fechar/${numero}`, body);
-  }
-
   /** Usado na validação da comanda a cada troca de tela, por isso não exibe o loading global. */
   getByNumero(numero: number | string) {
     return this.httpClient.get<ComandaDTO>(`${this.urlController}/${numero}`, semLoading());

@@ -160,6 +160,13 @@
   letter-spacing: 0.01em;
 }
 
+.account-hint {
+  margin: 0.65rem 0 0;
+  color: var(--account-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
 .empty-state {
   display: grid;
   justify-items: center;

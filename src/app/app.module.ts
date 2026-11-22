@@ -25,6 +25,7 @@ import { HTTP_LOADER_INTERCEPTOR_PROVIDER } from './interceptors/http-loading.in
 import { HTTP_ERROR_INTERCEPTOR_PROVIDER } from './interceptors/http-error.interceptor';
 import { HTTP_AUTH_INTERCEPTOR_PROVIDER } from './interceptors/http-auth.interceptor';
 import { ModalInformarNomePage } from './pages/login/modal-informar-nome/modal-informar-nome.page';
+import { ModalPagamentoPixPage } from './pages/minha-comanda/modal-pagamento-pix/modal-pagamento-pix.page';
 
 import localePt from '@angular/common/locales/pt';
 
@@ -50,7 +51,8 @@ registerLocaleData(localePt);
     ModalEditarPerfilPage,
     ModalInformacoesPage,
     ModalConfirmarPedidoPage,
-    ModalInformarNomePage
+    ModalInformarNomePage,
+    ModalPagamentoPixPage
   ],
   imports: [
     BrowserModule,

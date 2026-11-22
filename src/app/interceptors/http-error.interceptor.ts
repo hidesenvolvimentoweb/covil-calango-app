@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpContextToken, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
+
+/**
+ * Marca requisições cujo erro não deve abrir o alerta global (ex.: consultas periódicas em segundo plano,
+ * que falhariam repetidamente sem conexão).
+ */
+export const SEM_ALERTA_ERRO = new HttpContextToken<boolean>(() => false);
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -12,7 +18,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error) => {
-        this.handleError(error);
+        if (!req.context.get(SEM_ALERTA_ERRO)) {
+          this.handleError(error);
+        }
         return throwError(() => error);
       })
     );
