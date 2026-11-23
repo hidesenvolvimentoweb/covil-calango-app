@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { GenericClass } from 'src/app/model/generic.class';
-import { PedidoDTO } from 'src/app/model/pedido.dto';
+import { PedidoDTO, valorDoPedido } from 'src/app/model/pedido.dto';
 import { StatusPedidoEnum } from 'src/app/enums/status-pedido.enum';
 import { fromCategoriaProdutoEnumValue } from 'src/app/enums/categoria-produto.enum';
 import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
@@ -29,6 +29,9 @@ const ITENS_SKELETON = [1, 2, 3];
 })
 export class MinhaComandaPage extends GenericClass implements ViewWillEnter, ViewWillLeave {
 
+  /** Valor com o preço gravado no pedido (não muda se o preço do produto mudar depois). */
+  readonly valorDoPedido = valorDoPedido;
+
   public pedidos: PedidoDTO[] = [];
   public carregando = true;
   public pixPendente = false;
@@ -46,11 +49,7 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
   }
 
   get totalComanda(): number {
-    return this.pedidos.reduce((total, pedido) => {
-      const valor = pedido.produto?.valor ?? 0;
-      const quantidade = pedido.quantidade ?? 0;
-      return total + valor * quantidade;
-    }, 0);
+    return this.pedidos.reduce((total, pedido) => total + valorDoPedido(pedido), 0);
   }
 
   ionViewWillEnter(): void {

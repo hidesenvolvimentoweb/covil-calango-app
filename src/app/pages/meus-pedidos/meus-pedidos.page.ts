@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
-import { PedidoDTO } from 'src/app/model/pedido.dto';
+import { PedidoDTO, precoUnitario, valorDoPedido } from 'src/app/model/pedido.dto';
 import { GenericClass } from 'src/app/model/generic.class';
 import { fromStatusPedidoEnumValue, StatusPedidoEnum } from 'src/app/enums/status-pedido.enum';
 import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
@@ -17,6 +17,10 @@ const ITENS_SKELETON = [1, 2, 3];
   styleUrls: ['./meus-pedidos.page.scss'],
 })
 export class MeusPedidosPage extends GenericClass implements ViewWillEnter, ViewWillLeave {
+
+  /** Preço gravado no pedido (não muda se o preço do produto mudar depois). */
+  readonly precoUnitario = precoUnitario;
+  readonly valorDoPedido = valorDoPedido;
 
   public listaMeusPedidos: PedidoDTO[] = [];
   public carregando = true;

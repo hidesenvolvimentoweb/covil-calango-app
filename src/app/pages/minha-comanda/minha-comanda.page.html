@@ -33,7 +33,7 @@
           </div>
           <span class="product-quantity">{{ pedido.quantidade }}x</span>
           <strong class="product-total">
-            {{ ((pedido.produto?.valor || 0) * (pedido.quantidade || 0)) | currency: 'BRL' }}
+            {{ valorDoPedido(pedido) | currency: 'BRL' }}
           </strong>
         </div>
       </article>
