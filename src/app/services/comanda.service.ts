@@ -10,7 +10,7 @@ export class ComandaService extends AbstractGenericClass {
   override urlController = `${environment.url}/api/comanda`;
 
   gerarComanda(nome: string) {
-    return this.httpClient.get<ComandaDTO>(`${this.urlController}/gerar/${nome}`);
+    return this.httpClient.post<ComandaDTO>(`${this.urlController}/gerar/${encodeURIComponent(nome)}`, null);
   }
 
   /** Usado na validação da comanda a cada troca de tela, por isso não exibe o loading global. */
