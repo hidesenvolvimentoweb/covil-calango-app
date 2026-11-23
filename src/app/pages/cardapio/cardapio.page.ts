@@ -1,7 +1,10 @@
 import { Component, Injector } from '@angular/core';
 import { ProdutoDTO } from 'src/app/model/produtos.dto';
 import { GenericClass } from 'src/app/model/generic.class';
-import { ModalConfirmarPedidoPage } from './modal-confirmar-pedido/modal-confirmar-pedido.page';
+import {
+  ModalConfirmarPedidoPage,
+  quantidadeMaximaDoProduto
+} from './modal-confirmar-pedido/modal-confirmar-pedido.page';
 import { ProdutoService } from 'src/app/services/produto.service';
 import { ViewWillEnter } from '@ionic/angular';
 import { resolverUrlImagem } from 'src/app/utils/imagem.util';
@@ -58,6 +61,11 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
 
   ionViewWillEnter(): void {
     this.carregando = true;
+    this.carregarProdutos();
+  }
+
+  /** Recarrega o cardápio; usado também ao fechar o pedido, já que o estoque pode ter mudado. */
+  carregarProdutos(): void {
     this.produtoService.getAll(semLoading()).subscribe({
       next: (listaDeProdutos: unknown[]) => {
         this.montarCardapio(listaDeProdutos as ProdutoDTO[]);
@@ -67,18 +75,19 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
     });
   }
 
-  private montarCardapio(listaDeProdutos: ProdutoDTO[]): void {
-    this.listaDeProdutos = listaDeProdutos;
-    this.aplicarFiltros();
+  isEsgotado(produto: ProdutoDTO): boolean {
+    return quantidadeMaximaDoProduto(produto) < 1;
   }
 
   async openModalConfirmarPedido(produto: ProdutoDTO) {
-    (await this.modalController.create({
+    const modal = await this.modalController.create({
       component: ModalConfirmarPedidoPage,
       breakpoints: [0.8],
       initialBreakpoint: 0.8,
       componentProps: { produto }
-    })).present();
+    });
+    void modal.onDidDismiss().then(() => this.carregarProdutos());
+    await modal.present();
   }
 
   handleInput(event: any) {
@@ -116,6 +125,11 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
   private normalizarCategoria(categoria?: string | null): CategoriaProdutoEnum {
     const valores = Object.values(CategoriaProdutoEnum) as string[];
     return valores.includes(categoria ?? '') ? categoria as CategoriaProdutoEnum : CategoriaProdutoEnum.OUTROS;
+  }
+
+  private montarCardapio(listaDeProdutos: ProdutoDTO[]): void {
+    this.listaDeProdutos = listaDeProdutos;
+    this.aplicarFiltros();
   }
 
   private aplicarFiltros() {

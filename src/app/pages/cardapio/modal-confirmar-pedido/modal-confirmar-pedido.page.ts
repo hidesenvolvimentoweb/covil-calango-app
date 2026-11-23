@@ -11,8 +11,12 @@ import { SessaoService } from 'src/app/services/sessao.service';
 import { ComandaService } from 'src/app/services/comanda.service';
 
 const HTTP_STATUS_CONFLICT = 409;
-/** Mesmo limite validado pela API (PedidoService.QUANTIDADE_MAXIMA). */
+/** Mesmo limite validado pela API (Produto.QUANTIDADE_MAXIMA_POR_PEDIDO), usado se a API não informar outro. */
 export const QUANTIDADE_MAXIMA = 20;
+
+/** Quantidade que pode ser pedida do produto: o limite por pedido, já reduzido pela API ao estoque disponível. */
+export const quantidadeMaximaDoProduto = (produto?: ProdutoDTO): number =>
+  produto?.quantidadeMaximaPedido ?? QUANTIDADE_MAXIMA;
 
 @Component({
   selector: 'app-modal-confirmar-pedido',
@@ -25,7 +29,7 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
   public produto: ProdutoDTO;
   public form: FormGroup;
   public imagemComErro = false;
-  public readonly quantidadeMaxima = QUANTIDADE_MAXIMA;
+  public quantidadeMaxima = QUANTIDADE_MAXIMA;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,8 +54,9 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
   }
 
   configurarForm() {
+    this.quantidadeMaxima = quantidadeMaximaDoProduto(this.produto);
     this.form = this.formBuilder.group({
-      quantidade: [1, [Validators.required, Validators.min(1), Validators.max(QUANTIDADE_MAXIMA)]],
+      quantidade: [1, [Validators.required, Validators.min(1), Validators.max(this.quantidadeMaxima)]],
       observacao: [null],
       produto: [this.produto, Validators.required],
       comanda: [this.storageService.getNumeroDaComanda(), Validators.required]
@@ -69,7 +74,8 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
         message: `Pedido realizado com sucesso! Acompanhe-o na aba de 'Meus Pedidos'`,
         buttons: ['OK']
       })).present().then(() => this.modalController.dismiss()),
-      // 409: a comanda foi finalizada ou há um PIX pendente (pedidos bloqueados até pagar ou cancelar).
+      // 409: a comanda foi finalizada, há um PIX pendente (pedidos bloqueados até pagar ou cancelar) ou o produto
+      // não tem mais unidades suficientes (outro cliente comprou antes; o cardápio é recarregado ao fechar o modal).
       // O aviso da API é exibido pelo interceptor de erros; a sessão só expira se a comanda estiver fechada.
       error: (error: HttpErrorResponse) => {
         if (error.status === HTTP_STATUS_CONFLICT) {
@@ -81,7 +87,7 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
 
   addProduto() {
     const quantidadeAtual = Number(this.quantidade.value) || 0;
-    if (quantidadeAtual < QUANTIDADE_MAXIMA) {
+    if (quantidadeAtual < this.quantidadeMaxima) {
       this.quantidade.setValue(quantidadeAtual + 1);
     }
   }

@@ -73,10 +73,16 @@
         <ion-card-content>
           <p class="ingredients-label">INGREDIENTES</p>
           <p class="ingredients">{{ produto.ingredientes }}</p>
-          <ion-button expand="block" color="primary" (click)="realizarPedido(produto)">
+          <ion-button *ngIf="!isEsgotado(produto); else esgotado" expand="block" color="primary" (click)="realizarPedido(produto)">
             Eu Quero!
             <ion-icon slot="end" name="arrow-forward-outline" aria-hidden="true"></ion-icon>
           </ion-button>
+          <ng-template #esgotado>
+            <ion-button expand="block" color="medium" disabled>
+              Esgotado
+              <ion-icon slot="end" name="close-circle-outline" aria-hidden="true"></ion-icon>
+            </ion-button>
+          </ng-template>
         </ion-card-content>
       </ion-card>
     </section>
