@@ -122,7 +122,7 @@ export class ModalPagamentoPixPage implements OnInit, OnDestroy {
       message: 'O código atual deixará de valer. Você poderá fazer novos pedidos e gerar outro PIX quando quiser.',
       buttons: [
         { text: 'Voltar', role: 'cancel' },
-        { text: 'Cancelar PIX', role: 'destructive', handler: () => this.confirmarCancelamento() }
+        { text: 'Cancelar', role: 'destructive', handler: () => this.confirmarCancelamento() }
       ]
     });
     await alert.present();
