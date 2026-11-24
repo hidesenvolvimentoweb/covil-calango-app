@@ -49,6 +49,11 @@ export class ModalDetalharEventoPage implements OnInit {
     return inscricoesAbertas(this.evento);
   }
 
+  /** O evento já terminou (as inscrições estão encerradas, e não "por abrir"). */
+  get eventoEncerrado(): boolean {
+    return !!this.evento?.dataHoraFim && new Date(this.evento.dataHoraFim) <= new Date();
+  }
+
   get vagasEsgotadas(): boolean {
     return vagasEsgotadas(this.evento);
   }

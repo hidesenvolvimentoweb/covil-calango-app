@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { GenericClass } from 'src/app/model/generic.class';
 import { ModalEditarPerfilPage } from './modal-editar-perfil/modal-editar-perfil.page';
 import { ModalInformacoesPage } from './modal-informacoes/modal-informacoes.page';
-import { KEY_USUARIO, StorageService } from 'src/app/services/storage.service';
+import { StorageService } from 'src/app/services/storage.service';
 import { AppComponent } from 'src/app/app.component';
 import { UsuarioDTO } from 'src/app/model/usuario.dto';
 
@@ -24,7 +24,7 @@ export class PerfilPage extends GenericClass {
     private storageService: StorageService
   ) {
     super(injector);
-    this.usuario = this.storageService.get(KEY_USUARIO);
+    this.usuario = this.storageService.getUsuario();
   }
 
   get version() {

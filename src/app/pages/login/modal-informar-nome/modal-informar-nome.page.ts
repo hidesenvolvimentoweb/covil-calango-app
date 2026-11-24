@@ -93,7 +93,8 @@ export class ModalInformarNomePage extends GenericClass implements OnInit {
 
   setarDadosResponse(res: ComandaDTO | undefined, token?: string): void {
     this.storageService.set(KEY_TOKEN, token);
-    this.storageService.set(KEY_USUARIO, res?.usuario);
+    // Comanda de visitante: sem usuário, o nome exibido no app é o informado na comanda.
+    this.storageService.set(KEY_USUARIO, res?.usuario?.nome ? res.usuario : { ...res?.usuario, nome: res?.nomeCliente });
     this.storageService.set(KEY_COMANDA, res);
     this.sessaoService.monitorarComanda();
     this.router.navigate(['/home']);

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UsuarioDTO } from '../model/usuario.dto';
 
 export const KEY_USUARIO = 'USUARIO';
 export const KEY_COMANDA = 'COMANDA';
@@ -12,6 +13,19 @@ export class StorageService {
 
   getNumeroDaComanda(): number | string {
     return this.get<any>(KEY_COMANDA)?.numero || '';
+  }
+
+  /**
+   * Usuário da sessão. As comandas de visitante não têm usuário: sem nome gravado, usa o nome informado na comanda
+   * (sessões abertas antes da correção gravaram o usuário vazio).
+   */
+  getUsuario(): UsuarioDTO | null {
+    const usuario = this.get<UsuarioDTO>(KEY_USUARIO);
+    if (usuario?.nome) {
+      return usuario;
+    }
+    const nomeCliente = this.get<any>(KEY_COMANDA)?.nomeCliente;
+    return nomeCliente ? new UsuarioDTO({ ...usuario, nome: nomeCliente }) : usuario;
   }
 
   get<T>(key: string): T | null {

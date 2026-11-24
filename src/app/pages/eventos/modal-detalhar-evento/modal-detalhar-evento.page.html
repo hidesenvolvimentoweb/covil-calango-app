@@ -90,7 +90,9 @@
       </p>
     </ng-container>
     <ng-template #inscricoesFechadas>
-      <p class="event-detail-hint">As inscrições pelo app abrem no dia do evento.</p>
+      <p class="event-detail-hint">
+        {{ eventoEncerrado ? 'Este evento já terminou.' : 'As inscrições pelo app abrem no dia do evento.' }}
+      </p>
     </ng-template>
   </main>
 </ion-content>

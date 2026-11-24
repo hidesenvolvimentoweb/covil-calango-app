@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular';
-import { KEY_USUARIO, StorageService } from './services/storage.service';
+import { StorageService } from './services/storage.service';
 import { WebsocketService } from './services/websocket.service';
 import { SessaoService } from './services/sessao.service';
 import { ModalHistoricoService } from './services/modal-historico.service';
@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     private modalController: ModalController,
     private modalHistoricoService: ModalHistoricoService
   ) {
-    this.usuario = this.storageService.get(KEY_USUARIO);
+    this.usuario = this.storageService.getUsuario();
   }
 
   static get version() {
