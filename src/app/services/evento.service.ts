@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { semLoading } from '../interceptors/http-loading.interceptor';
-import { EventoDTO } from '../model/evento.dto';
+import { EventoDTO, EventoParticipanteDTO } from '../model/evento.dto';
 import { formatarDataHoraLocal } from '../utils/data-hora.util';
 import { AbstractGenericClass } from './generic.service';
 
@@ -23,6 +23,25 @@ export class EventoService extends AbstractGenericClass {
       .set('inicio', formatarDataHoraLocal(inicio))
       .set('fim', formatarDataHoraLocal(fim));
     return this.httpClient.get<EventoDTO[]>(`${this.urlController}`, { params, ...semLoading() });
+  }
+
+  /** Evento atualizado (participantes e se a comanda deste aparelho está inscrita). */
+  getEvento(id: number) {
+    return this.httpClient.get<EventoDTO>(`${this.urlController}/${id}`, semLoading());
+  }
+
+  getParticipantes(id: number) {
+    return this.httpClient.get<EventoParticipanteDTO[]>(`${this.urlController}/${id}/participantes`, semLoading());
+  }
+
+  /** Participa com a comanda deste aparelho; a inscrição paga entra na comanda. */
+  participar(id: number) {
+    return this.httpClient.post<void>(`${this.urlController}/${id}/participacao`, null);
+  }
+
+  /** Sai do evento; o valor da inscrição sai da comanda. */
+  sair(id: number) {
+    return this.httpClient.delete<void>(`${this.urlController}/${id}/participacao`);
   }
 
 }

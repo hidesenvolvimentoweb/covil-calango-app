@@ -7,7 +7,8 @@
       <p class="event-label">{{ rotuloTipo | uppercase }}</p>
       <ion-card-title>{{ evento.nome }}</ion-card-title>
     </div>
-    <span class="status-badge agora" *ngIf="acontecendoAgora">Agora</span>
+    <span class="status-badge inscrito" *ngIf="evento.participando">Inscrito</span>
+    <span class="status-badge agora" *ngIf="acontecendoAgora && !evento.participando">Agora</span>
     <ion-icon class="event-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
   </div>
   <ion-card-content>
@@ -23,7 +24,7 @@
     </div>
     <p class="event-price">
       {{ evento.valorInscricao ? (evento.valorInscricao | currency: 'BRL') : 'Inscrição gratuita' }}
-      <ng-container *ngIf="evento.vagas"> · {{ evento.vagas }} vagas</ng-container>
+      <ng-container *ngIf="evento.vagas"> · {{ evento.totalParticipantes || 0 }}/{{ evento.vagas }} vagas</ng-container>
     </p>
   </ion-card-content>
 </ion-card>

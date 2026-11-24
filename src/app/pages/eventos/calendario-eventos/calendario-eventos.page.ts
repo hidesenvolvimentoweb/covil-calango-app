@@ -61,13 +61,16 @@ export class CalendarioEventosPage extends GenericClass implements ViewWillEnter
     this.carregarLista();
   }
 
+  /** Ao fechar o detalhe, a lista é recarregada: o cliente pode ter entrado ou saído do evento. */
   async abrirEvento(evento: EventoDTO) {
-    (await this.modalController.create({
+    const modal = await this.modalController.create({
       component: ModalDetalharEventoPage,
       breakpoints: [0.8, 1],
       initialBreakpoint: 0.8,
       componentProps: { evento }
-    })).present();
+    });
+    void modal.onDidDismiss().then(() => this.carregarLista());
+    await modal.present();
   }
 
   private selecionarDia(clique: DateClickArg): void {

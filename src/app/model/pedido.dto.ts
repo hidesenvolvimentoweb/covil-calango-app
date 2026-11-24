@@ -6,6 +6,8 @@ export class PedidoDTO {
   public dataHora?: Date;
   public observacao?: string;
   public produto?: ProdutoDTO;
+  /** Nome do item sem produto, como a inscrição em um evento ("Evento - Torneio Locals"). */
+  public descricao?: string;
   public quantidade?: number;
   public comanda?: string;
   /** Preço do produto no momento do pedido (gravado pela API). */
@@ -29,4 +31,14 @@ export function precoUnitario(pedido: PedidoDTO): number {
 
 export function valorDoPedido(pedido: PedidoDTO): number {
   return precoUnitario(pedido) * (pedido.quantidade ?? 0);
+}
+
+/** Nome do item na comanda: o do produto ou, na inscrição de um evento, a descrição gravada pela API. */
+export function nomeDoPedido(pedido: PedidoDTO): string {
+  return pedido.produto?.nome ?? pedido.descricao ?? '';
+}
+
+/** Inscrição em evento: entra na comanda, mas não é um pedido da cozinha. */
+export function isInscricaoEvento(pedido: PedidoDTO): boolean {
+  return !pedido.produto && !!pedido.descricao;
 }

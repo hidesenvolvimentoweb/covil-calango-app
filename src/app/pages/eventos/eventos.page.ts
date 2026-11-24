@@ -29,7 +29,12 @@ export class EventosPage extends GenericClass implements ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
-    this.carregando = true;
+    this.carregarEventos(true);
+  }
+
+  /** {@code skeleton}: exibe o carregamento (na entrada da tela); ao voltar do detalhe, a lista só é atualizada. */
+  private carregarEventos(skeleton: boolean): void {
+    this.carregando = skeleton;
     this.eventoService.getHoje().subscribe({
       next: res => {
         this.eventosDeHoje = res;
@@ -39,13 +44,16 @@ export class EventosPage extends GenericClass implements ViewWillEnter {
     });
   }
 
+  /** Ao fechar o detalhe, a lista é recarregada: o cliente pode ter entrado ou saído do evento. */
   async abrirEvento(evento: EventoDTO) {
-    (await this.modalController.create({
+    const modal = await this.modalController.create({
       component: ModalDetalharEventoPage,
       breakpoints: [0.8, 1],
       initialBreakpoint: 0.8,
       componentProps: { evento }
-    })).present();
+    });
+    void modal.onDidDismiss().then(() => this.carregarEventos(false));
+    await modal.present();
   }
 
 }

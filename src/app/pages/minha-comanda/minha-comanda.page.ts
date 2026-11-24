@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { GenericClass } from 'src/app/model/generic.class';
-import { PedidoDTO, valorDoPedido } from 'src/app/model/pedido.dto';
+import { isInscricaoEvento, nomeDoPedido, PedidoDTO, valorDoPedido } from 'src/app/model/pedido.dto';
 import { StatusPedidoEnum } from 'src/app/enums/status-pedido.enum';
 import { fromCategoriaProdutoEnumValue } from 'src/app/enums/categoria-produto.enum';
 import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
@@ -31,6 +31,8 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
 
   /** Valor com o preço gravado no pedido (não muda se o preço do produto mudar depois). */
   readonly valorDoPedido = valorDoPedido;
+  readonly nomeDoPedido = nomeDoPedido;
+  readonly isInscricaoEvento = isInscricaoEvento;
 
   public pedidos: PedidoDTO[] = [];
   public carregando = true;
@@ -77,6 +79,9 @@ export class MinhaComandaPage extends GenericClass implements ViewWillEnter, Vie
   }
 
   getNomeCategoria(pedido: PedidoDTO): string {
+    if (isInscricaoEvento(pedido)) {
+      return 'Inscrição em evento';
+    }
     return fromCategoriaProdutoEnumValue(pedido.produto?.categoria) || 'Produto';
   }
 

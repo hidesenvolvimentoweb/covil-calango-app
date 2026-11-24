@@ -32,7 +32,7 @@
         <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
         <div>
           <span class="detail-label">Vagas</span>
-          <strong>{{ evento.vagas || 'Sem limite' }}</strong>
+          <strong>{{ ocupacao }}</strong>
         </div>
       </div>
     </section>
@@ -42,6 +42,55 @@
       <p class="event-description">{{ evento.descricao }}</p>
     </section>
 
-    <p class="event-detail-hint">Para participar, fale com a equipe no balcão.</p>
+    <section class="event-detail-card">
+      <span class="detail-label">Participantes</span>
+      <ng-container *ngIf="carregandoParticipantes">
+        <ion-skeleton-text animated class="participant-skeleton"></ion-skeleton-text>
+        <ion-skeleton-text animated class="participant-skeleton"></ion-skeleton-text>
+      </ng-container>
+      <p class="participants-empty" *ngIf="!carregandoParticipantes && !participantes.length">
+        Ninguém se inscreveu ainda. Seja o primeiro!
+      </p>
+      <ul class="participants-list" *ngIf="!carregandoParticipantes && participantes.length">
+        <li class="participant" *ngFor="let participante of participantes; let posicao = index">
+          <span class="participant-position">{{ posicao + 1 }}</span>
+          <span class="participant-name">{{ participante.nome }}</span>
+          <span class="participant-you" *ngIf="participante.voce">Você</span>
+        </li>
+      </ul>
+    </section>
+
+    <ng-container *ngIf="inscricoesAbertas; else inscricoesFechadas">
+      <ion-button
+        *ngIf="!evento.participando"
+        expand="block"
+        class="event-action participate-button"
+        [disabled]="enviando || vagasEsgotadas"
+        (click)="participar()">
+        <ion-icon slot="start" name="add-circle-outline" aria-hidden="true"></ion-icon>
+        {{ vagasEsgotadas ? 'Vagas esgotadas' : 'Participar' }}
+      </ion-button>
+      <ng-container *ngIf="evento.participando">
+        <p class="participating-message">
+          <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+          Você está participando deste evento
+        </p>
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="event-action leave-button"
+          [disabled]="enviando"
+          (click)="sair()">
+          <ion-icon slot="start" name="exit-outline" aria-hidden="true"></ion-icon>
+          Sair do evento
+        </ion-button>
+      </ng-container>
+      <p class="event-detail-hint" *ngIf="evento.valorInscricao && !evento.participando">
+        O valor da inscrição é adicionado à sua comanda.
+      </p>
+    </ng-container>
+    <ng-template #inscricoesFechadas>
+      <p class="event-detail-hint">As inscrições pelo app abrem no dia do evento.</p>
+    </ng-template>
   </main>
 </ion-content>
