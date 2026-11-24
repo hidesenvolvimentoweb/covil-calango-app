@@ -1,0 +1,48 @@
+<ion-content class="events-content">
+  <main class="events-page">
+    <header class="page-intro">
+      <p class="eyebrow">AGENDA DO COVIL</p>
+      <h1>Eventos de hoje</h1>
+      <p class="intro-caption">{{ hoje | date: "EEEE, dd 'de' MMMM" }}</p>
+    </header>
+
+    <section class="events-list" *ngIf="carregando" aria-busy="true" aria-label="Carregando eventos">
+      <ion-card class="skeleton-card" *ngFor="let item of itensSkeleton">
+        <div class="skeleton-heading">
+          <ion-skeleton-text animated class="skeleton-circle"></ion-skeleton-text>
+          <div class="skeleton-title">
+            <ion-skeleton-text animated class="skeleton-line skeleton-label"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+          </div>
+        </div>
+        <ion-skeleton-text animated class="skeleton-line skeleton-short"></ion-skeleton-text>
+      </ion-card>
+    </section>
+
+    <section class="events-list" *ngIf="!carregando && eventosDeHoje.length">
+      <app-ygo-card-evento
+        *ngFor="let evento of eventosDeHoje"
+        [evento]="evento"
+        (click)="abrirEvento(evento)">
+      </app-ygo-card-evento>
+    </section>
+
+    <section class="empty-state" *ngIf="!carregando && !eventosDeHoje.length">
+      <div class="empty-icon">
+        <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+      </div>
+      <h2>Nenhum evento hoje. Confira no calendário o que vem por aí!</h2>
+    </section>
+
+    <button class="calendar-button" type="button" (click)="toRoute('/eventos/calendario')">
+      <span class="calendar-button-icon">
+        <ion-icon name="calendar-number-outline" aria-hidden="true"></ion-icon>
+      </span>
+      <span class="calendar-button-copy">
+        <span class="calendar-button-title">Ver calendário</span>
+        <span class="calendar-button-description">Confira os próximos eventos</span>
+      </span>
+      <ion-icon class="calendar-button-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+    </button>
+  </main>
+</ion-content>

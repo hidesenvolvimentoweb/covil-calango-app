@@ -1,0 +1,98 @@
+:host {
+  --event-ink: #292621;
+  --event-muted: #8c8983;
+  --event-olive: #526342;
+  --event-green-dark: #4c7134;
+  --event-cream: #edf2e8;
+  display: block;
+}
+
+.event-card {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid rgba(41, 38, 33, 0.05);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.event-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.event-icon {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 3.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--event-cream);
+  color: var(--event-green-dark);
+  font-size: 1.55rem;
+}
+
+.event-title {
+  min-width: 0;
+  flex: 1;
+}
+
+.event-label {
+  margin: 0;
+  color: var(--event-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.event-title ion-card-title {
+  margin-top: 0.3rem;
+  color: var(--event-ink);
+  font-size: 1rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.status-badge {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.status-badge.agora {
+  background: #e8f2df;
+  color: #3c662b;
+}
+
+.event-arrow {
+  flex: 0 0 auto;
+  color: var(--event-muted);
+}
+
+.event-card ion-card-content {
+  padding: 0.85rem 0 0;
+  color: var(--event-muted);
+}
+
+.event-time {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--event-olive);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.event-time ion-icon {
+  flex: 0 0 auto;
+  font-size: 1.15rem;
+}
+
+.event-price {
+  margin: 0.35rem 0 0;
+  font-size: 0.86rem;
+}

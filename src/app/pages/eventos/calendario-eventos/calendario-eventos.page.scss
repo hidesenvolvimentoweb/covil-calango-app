@@ -1,0 +1,224 @@
+:host {
+  --calendar-background: #faf9f7;
+  --calendar-ink: #292621;
+  --calendar-muted: #8c8983;
+  --calendar-olive: #526342;
+  --calendar-green-dark: #4c7134;
+  --calendar-cream: #edf2e8;
+}
+
+.calendar-content {
+  --background: var(--calendar-background);
+}
+
+.calendar-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+  color: var(--calendar-ink);
+}
+
+.page-intro {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-button {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  place-items: center;
+  border: 0;
+  border-radius: 1.1rem;
+  background: #f1eee8;
+  color: var(--calendar-ink);
+  font-size: 1.3rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--calendar-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.page-intro h1 {
+  margin: 0.3rem 0 0;
+  font-size: clamp(1.35rem, 5.5vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.calendar-card {
+  padding: 0.85rem;
+  border: 1px solid rgba(41, 38, 33, 0.05);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 0.75rem;
+  color: var(--calendar-muted);
+  font-size: 0.78rem;
+}
+
+.calendar-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 0.2rem;
+}
+
+/* Mesmas cores de getCorTipoEvento (tipo-evento.enum.ts). */
+.legend-torneio { background: #1b7f4b; }
+.legend-board-games { background: #2f6fb3; }
+.legend-outros { background: #7b4fb5; }
+
+/*
+ * O FullCalendar fica fora do encapsulamento do componente: os estilos internos dele usam ::ng-deep. A classe .fc
+ * fica no próprio elemento <full-calendar>, por isso os seletores partem de .events-calendar.fc.
+ */
+.events-calendar {
+  --fc-border-color: rgba(41, 38, 33, 0.08);
+  --fc-today-bg-color: rgba(120, 189, 73, 0.14);
+  --fc-button-bg-color: var(--calendar-cream);
+  --fc-button-border-color: transparent;
+  --fc-button-text-color: var(--calendar-green-dark);
+  --fc-button-hover-bg-color: #e1eadb;
+  --fc-button-hover-border-color: transparent;
+  --fc-button-active-bg-color: #d5e2cc;
+  --fc-button-active-border-color: transparent;
+  display: block;
+  font-size: 0.8rem;
+}
+
+.events-calendar.fc ::ng-deep {
+  .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 0.75rem;
+  }
+
+  /* Só a primeira letra maiúscula: "Novembro de 2026". */
+  .fc-toolbar-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .fc-toolbar-title::first-letter {
+    text-transform: uppercase;
+  }
+
+  .fc-button {
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.75rem;
+    box-shadow: none !important;
+  }
+
+  .fc-col-header-cell-cushion {
+    color: var(--calendar-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .fc-daygrid-day-number {
+    color: var(--calendar-ink);
+    text-decoration: none;
+  }
+
+  .fc-daygrid-day-frame {
+    min-height: 3.6rem;
+    cursor: pointer;
+  }
+
+  .fc-event {
+    border-radius: 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+
+  .fc-daygrid-more-link {
+    color: var(--calendar-olive);
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+}
+
+.list-section {
+  margin-top: 1.5rem;
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.link-button {
+  border: 0;
+  background: none;
+  color: var(--calendar-olive);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.events-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.skeleton-card {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 1.15rem;
+  background: #fff;
+}
+
+.skeleton-line {
+  height: 0.9rem;
+  border-radius: 0.4rem;
+}
+
+.skeleton-label {
+  width: 35%;
+}
+
+.empty-message {
+  margin: 0;
+  padding: 1.25rem;
+  border-radius: 1.15rem;
+  background: #fff;
+  color: var(--calendar-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  .calendar-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
+}

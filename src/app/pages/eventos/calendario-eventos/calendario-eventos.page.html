@@ -1,0 +1,50 @@
+<ion-content class="calendar-content">
+  <main class="calendar-page">
+    <header class="page-intro">
+      <button class="back-button" type="button" aria-label="Voltar para os eventos de hoje" (click)="toRoute('/eventos')">
+        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <div>
+        <p class="eyebrow">AGENDA DO COVIL</p>
+        <h1>Calendário de eventos</h1>
+      </div>
+    </header>
+
+    <section class="calendar-card">
+      <full-calendar class="events-calendar" [options]="opcoesCalendario"></full-calendar>
+      <div class="calendar-legend">
+        <span><span class="legend-color legend-torneio"></span>Torneio</span>
+        <span><span class="legend-color legend-board-games"></span>Board Games</span>
+        <span><span class="legend-color legend-outros"></span>Outros</span>
+      </div>
+    </section>
+
+    <section class="list-section" aria-live="polite">
+      <div class="section-heading">
+        <h2 *ngIf="!diaSelecionado">Próximos eventos</h2>
+        <h2 *ngIf="diaSelecionado">Eventos de {{ diaSelecionado | date: "dd 'de' MMMM" }}</h2>
+        <button class="link-button" type="button" *ngIf="diaSelecionado" (click)="verProximos()">Ver próximos</button>
+      </div>
+
+      <div class="events-list" *ngIf="carregando" aria-busy="true" aria-label="Carregando eventos">
+        <ion-card class="skeleton-card" *ngFor="let item of itensSkeleton">
+          <ion-skeleton-text animated class="skeleton-line skeleton-label"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+        </ion-card>
+      </div>
+
+      <div class="events-list" *ngIf="!carregando && eventos.length">
+        <app-ygo-card-evento
+          *ngFor="let evento of eventos"
+          [evento]="evento"
+          [exibirData]="!diaSelecionado"
+          (click)="abrirEvento(evento)">
+        </app-ygo-card-evento>
+      </div>
+
+      <p class="empty-message" *ngIf="!carregando && !eventos.length">
+        {{ diaSelecionado ? 'Nenhum evento neste dia.' : 'Nenhum evento marcado para os próximos dias.' }}
+      </p>
+    </section>
+  </main>
+</ion-content>

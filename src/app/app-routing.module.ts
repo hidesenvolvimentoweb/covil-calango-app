@@ -8,6 +8,8 @@ import { CardapioPage } from './pages/cardapio/cardapio.page';
 import { MeusPedidosPage } from './pages/meus-pedidos/meus-pedidos.page';
 import { MinhaComandaPage } from './pages/minha-comanda/minha-comanda.page';
 import { HasLoginGuard } from './guards/has-login.guard';
+import { EventosPage } from './pages/eventos/eventos.page';
+import { CalendarioEventosPage } from './pages/eventos/calendario-eventos/calendario-eventos.page';
 
 const routes: Routes = [
   {
@@ -38,6 +40,16 @@ const routes: Routes = [
   {
     path: 'minha-comanda',
     component: MinhaComandaPage,
+    canActivate: [LoginGuard]
+  },
+  {
+    path: 'eventos',
+    component: EventosPage,
+    canActivate: [LoginGuard]
+  },
+  {
+    path: 'eventos/calendario',
+    component: CalendarioEventosPage,
     canActivate: [LoginGuard]
   },
   {

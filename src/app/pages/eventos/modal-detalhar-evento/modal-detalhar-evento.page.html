@@ -1,0 +1,47 @@
+<ion-content class="event-modal-content">
+  <main class="event-detail-page">
+    <div class="event-detail-icon">
+      <ion-icon [name]="icone" aria-hidden="true"></ion-icon>
+    </div>
+    <p class="eyebrow">{{ rotuloTipo | uppercase }}</p>
+    <h1>{{ evento.nome }}</h1>
+
+    <section class="event-detail-card">
+      <div class="detail-row">
+        <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+        <div>
+          <span class="detail-label">Quando</span>
+          <strong *ngIf="mesmoDia">
+            {{ evento.dataHoraInicio | date: 'EEEE, dd/MM/yyyy' }}<br />
+            {{ evento.dataHoraInicio | date: 'HH:mm' }} às {{ evento.dataHoraFim | date: 'HH:mm' }}
+          </strong>
+          <strong *ngIf="!mesmoDia">
+            {{ evento.dataHoraInicio | date: 'dd/MM/yyyy HH:mm' }}<br />
+            até {{ evento.dataHoraFim | date: 'dd/MM/yyyy HH:mm' }}
+          </strong>
+        </div>
+      </div>
+      <div class="detail-row">
+        <ion-icon name="ticket-outline" aria-hidden="true"></ion-icon>
+        <div>
+          <span class="detail-label">Inscrição</span>
+          <strong>{{ evento.valorInscricao ? (evento.valorInscricao | currency: 'BRL') : 'Gratuita' }}</strong>
+        </div>
+      </div>
+      <div class="detail-row">
+        <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+        <div>
+          <span class="detail-label">Vagas</span>
+          <strong>{{ evento.vagas || 'Sem limite' }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="event-detail-card" *ngIf="evento.descricao">
+      <span class="detail-label">Sobre o evento</span>
+      <p class="event-description">{{ evento.descricao }}</p>
+    </section>
+
+    <p class="event-detail-hint">Para participar, fale com a equipe no balcão.</p>
+  </main>
+</ion-content>

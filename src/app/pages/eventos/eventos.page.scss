@@ -1,0 +1,196 @@
+:host {
+  --events-background: #faf9f7;
+  --events-ink: #292621;
+  --events-muted: #8c8983;
+  --events-olive: #526342;
+  --events-green-dark: #4c7134;
+  --events-cream: #edf2e8;
+}
+
+.events-content {
+  --background: var(--events-background);
+}
+
+.events-page {
+  width: min(100%, 560px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+  color: var(--events-ink);
+}
+
+.page-intro {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--events-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.page-intro h1 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.5rem, 6vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.intro-caption {
+  margin: 0.4rem 0 0;
+  color: var(--events-muted);
+  font-size: 0.9rem;
+}
+
+/* "Terça-feira, 24 de novembro": só a primeira letra maiúscula. */
+.intro-caption::first-letter {
+  text-transform: uppercase;
+}
+
+.events-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.skeleton-card {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.skeleton-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.85rem;
+}
+
+.skeleton-circle {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 3.5rem;
+  margin: 0;
+  border-radius: 50%;
+}
+
+.skeleton-title {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 0.9rem;
+  border-radius: 0.4rem;
+}
+
+.skeleton-label {
+  width: 35%;
+}
+
+.skeleton-short {
+  width: 55%;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgba(82, 99, 66, 0.12);
+  border-radius: 1.2rem;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+}
+
+.empty-icon {
+  display: grid;
+  width: 4.25rem;
+  height: 4.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--events-cream);
+  color: var(--events-green-dark);
+  font-size: 1.9rem;
+}
+
+.empty-state h2 {
+  margin: 0;
+  color: var(--events-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.calendar-button {
+  display: flex;
+  width: 100%;
+  min-height: 5.6rem;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.25rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(82, 99, 66, 0.18);
+  border-radius: 1.15rem;
+  background: #f7faf4;
+  color: var(--events-ink);
+  text-align: left;
+  box-shadow: 0 0.4rem 1.4rem rgba(50, 42, 30, 0.045);
+  cursor: pointer;
+  transition: transform 160ms ease;
+}
+
+.calendar-button:active {
+  transform: scale(0.985);
+}
+
+.calendar-button-icon {
+  display: grid;
+  width: 3.65rem;
+  height: 3.65rem;
+  flex: 0 0 3.65rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--events-cream);
+  color: var(--events-green-dark);
+  font-size: 1.55rem;
+}
+
+.calendar-button-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 0.2rem;
+}
+
+.calendar-button-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.calendar-button-description {
+  color: var(--events-muted);
+  font-size: 0.85rem;
+}
+
+.calendar-button-arrow {
+  flex: 0 0 auto;
+  color: var(--events-muted);
+  font-size: 1.2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-button {
+    transition: none;
+  }
+}
+
+@media (min-width: 600px) {
+  .events-page {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
+}

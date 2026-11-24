@@ -26,6 +26,11 @@ import { HTTP_ERROR_INTERCEPTOR_PROVIDER } from './interceptors/http-error.inter
 import { HTTP_AUTH_INTERCEPTOR_PROVIDER } from './interceptors/http-auth.interceptor';
 import { ModalInformarNomePage } from './pages/login/modal-informar-nome/modal-informar-nome.page';
 import { ModalPagamentoPixPage } from './pages/minha-comanda/modal-pagamento-pix/modal-pagamento-pix.page';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { CardEventoComponent } from './components/card-evento/card-evento.component';
+import { EventosPage } from './pages/eventos/eventos.page';
+import { CalendarioEventosPage } from './pages/eventos/calendario-eventos/calendario-eventos.page';
+import { ModalDetalharEventoPage } from './pages/eventos/modal-detalhar-evento/modal-detalhar-evento.page';
 
 import localePt from '@angular/common/locales/pt';
 
@@ -40,6 +45,7 @@ registerLocaleData(localePt);
     MenuCardComponent,
     AccordionNotificacaoComponent,
     AccordionHistoricoComponent,
+    CardEventoComponent,
     // Páginas
     LoginPage,
     HomePage,
@@ -47,17 +53,21 @@ registerLocaleData(localePt);
     PerfilPage,
     MeusPedidosPage,
     MinhaComandaPage,
+    EventosPage,
+    CalendarioEventosPage,
     // Modais
     ModalEditarPerfilPage,
     ModalInformacoesPage,
     ModalConfirmarPedidoPage,
     ModalInformarNomePage,
-    ModalPagamentoPixPage
+    ModalPagamentoPixPage,
+    ModalDetalharEventoPage
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
+    FullCalendarModule,
     // No modo 'ios' o Ionic não trata o botão voltar do Android por padrão: habilitado explicitamente.
     IonicModule.forRoot({ mode: 'ios', hardwareBackButton: true }),
     AppRoutingModule,
