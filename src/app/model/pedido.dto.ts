@@ -33,12 +33,17 @@ export function valorDoPedido(pedido: PedidoDTO): number {
   return precoUnitario(pedido) * (pedido.quantidade ?? 0);
 }
 
-/** Nome do item na comanda: o do produto ou, na inscrição de um evento, a descrição gravada pela API. */
+/** Nome do item na comanda: o do produto ou, nos itens avulsos (evento, pacote), a descrição gravada pela API. */
 export function nomeDoPedido(pedido: PedidoDTO): string {
   return pedido.produto?.nome ?? pedido.descricao ?? '';
 }
 
-/** Inscrição em evento: entra na comanda, mas não é um pedido da cozinha. */
-export function isInscricaoEvento(pedido: PedidoDTO): boolean {
+/** Item sem produto (inscrição em evento, taxa de pacote): entra na comanda, mas não é um pedido da cozinha. */
+export function isItemAvulso(pedido: PedidoDTO): boolean {
   return !pedido.produto && !!pedido.descricao;
+}
+
+/** Taxa de um pacote deixado na loja (a API grava a descrição "Pacote CODIGO"). */
+export function isTaxaPacote(pedido: PedidoDTO): boolean {
+  return isItemAvulso(pedido) && pedido.descricao!.startsWith('Pacote ');
 }

@@ -31,6 +31,8 @@ import { CardEventoComponent } from './components/card-evento/card-evento.compon
 import { EventosPage } from './pages/eventos/eventos.page';
 import { CalendarioEventosPage } from './pages/eventos/calendario-eventos/calendario-eventos.page';
 import { ModalDetalharEventoPage } from './pages/eventos/modal-detalhar-evento/modal-detalhar-evento.page';
+import { PacotesPage } from './pages/pacotes/pacotes.page';
+import { ModalDeixarPacotePage } from './pages/pacotes/modal-deixar-pacote/modal-deixar-pacote.page';
 
 import localePt from '@angular/common/locales/pt';
 
@@ -55,13 +57,15 @@ registerLocaleData(localePt);
     MinhaComandaPage,
     EventosPage,
     CalendarioEventosPage,
+    PacotesPage,
     // Modais
     ModalEditarPerfilPage,
     ModalInformacoesPage,
     ModalConfirmarPedidoPage,
     ModalInformarNomePage,
     ModalPagamentoPixPage,
-    ModalDetalharEventoPage
+    ModalDetalharEventoPage,
+    ModalDeixarPacotePage
   ],
   imports: [
     BrowserModule,

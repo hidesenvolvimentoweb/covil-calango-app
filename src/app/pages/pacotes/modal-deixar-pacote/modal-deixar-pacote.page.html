@@ -1,0 +1,98 @@
+<ion-content class="package-modal-content">
+  <main class="package-modal" *ngIf="!criado; else codigoGerado">
+    <div class="modal-icon">
+      <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+    </div>
+    <h1>Deixar um pacote</h1>
+    <p class="modal-caption">
+      Entregue o item no balcão e cadastre aqui. Quem vai receber retira com o código que vamos gerar.
+    </p>
+
+    <section class="rules" aria-label="O que pode ser deixado">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      <p>
+        Só aceitamos itens relacionados à loja: cartas, decks, playmats, acessórios, produtos lacrados e board games.
+        <strong>Não aceitamos celulares, roupas, calçados ou outros objetos pessoais.</strong>
+      </p>
+    </section>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()">
+      <ion-item>
+        <ion-label position="stacked">O que você está deixando?</ion-label>
+        <ion-select formControlName="categoria" interface="action-sheet" placeholder="Selecione" cancelText="Cancelar">
+          <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.valor">
+            {{ categoria.rotulo }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <p class="field-error" *ngIf="form.get('categoria')?.touched && form.get('categoria')?.invalid">
+        Selecione o tipo do item.
+      </p>
+
+      <ion-item>
+        <ion-label position="stacked">Descrição</ion-label>
+        <ion-input formControlName="descricao" maxlength="255" placeholder="Ex.: Playmat azul do Dark Magician"></ion-input>
+      </ion-item>
+      <p class="field-error" *ngIf="form.get('descricao')?.touched && form.get('descricao')?.invalid">
+        Descreva o item.
+      </p>
+
+      <ion-item>
+        <ion-label position="stacked">Quem vai receber?</ion-label>
+        <ion-input formControlName="destinatario" maxlength="255" autocapitalize="words" placeholder="Nome de quem vai retirar"></ion-input>
+      </ion-item>
+      <p class="field-error" *ngIf="form.get('destinatario')?.touched && form.get('destinatario')?.invalid">
+        Informe o nome de quem vai receber.
+      </p>
+
+      <div class="photo-field">
+        <span class="field-label">Foto do item</span>
+        <img *ngIf="preview" class="photo-preview" [src]="preview" alt="Foto do item que está sendo deixado" />
+        <div class="photo-actions">
+          <ion-button *ngIf="cameraNativa" fill="outline" type="button" (click)="tirarFoto()">
+            <ion-icon slot="start" name="camera-outline" aria-hidden="true"></ion-icon>
+            {{ preview ? 'Tirar outra' : 'Tirar foto' }}
+          </ion-button>
+          <ion-button fill="outline" type="button" [disabled]="preparandoFoto" (click)="inputFoto.click()">
+            <ion-icon slot="start" [name]="cameraNativa ? 'images-outline' : 'camera-outline'" aria-hidden="true"></ion-icon>
+            {{ preparandoFoto ? 'Preparando...' : cameraNativa ? 'Galeria' : (preview ? 'Trocar foto' : 'Adicionar foto') }}
+          </ion-button>
+          <input #inputFoto type="file" hidden accept="image/*" capture="environment" (change)="selecionarFoto($event)" />
+        </div>
+        <p class="field-error" *ngIf="form.touched && !foto">A foto do item é obrigatória.</p>
+      </div>
+
+      <ion-item lines="none" class="consent">
+        <ion-checkbox slot="start" formControlName="aceite"></ion-checkbox>
+        <ion-label class="ion-text-wrap">
+          Confirmo que o item é relacionado à loja e que a equipe pode recusá-lo.
+        </ion-label>
+      </ion-item>
+
+      <p class="fee-hint" *ngIf="valorTaxa">
+        A taxa de <strong>{{ valorTaxa | currency: 'BRL' }}</strong> por pacote será adicionada à sua comanda.
+      </p>
+
+      <ion-button expand="block" type="submit" class="submit-button" [disabled]="enviando || form.invalid || !foto">
+        <ion-icon slot="start" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+        {{ enviando ? 'Enviando...' : 'Deixar pacote' }}
+      </ion-button>
+      <ion-button expand="block" fill="clear" type="button" (click)="fechar()">Cancelar</ion-button>
+    </form>
+  </main>
+
+  <ng-template #codigoGerado>
+    <main class="package-modal package-created">
+      <div class="modal-icon modal-icon-success">
+        <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+      </div>
+      <h1>Pacote registrado!</h1>
+      <p class="modal-caption">Envie este código para <strong>{{ criado!.destinatario }}</strong>:</p>
+      <p class="created-code" aria-live="polite">{{ criado!.codigo }}</p>
+      <p class="modal-caption">
+        Na retirada, o atendente vai pedir o código. Você também encontra o código na tela de Pacotes.
+      </p>
+      <ion-button expand="block" class="submit-button" (click)="fechar()">Concluir</ion-button>
+    </main>
+  </ng-template>
+</ion-content>

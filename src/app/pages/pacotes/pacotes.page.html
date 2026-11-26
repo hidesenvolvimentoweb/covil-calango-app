@@ -1,0 +1,83 @@
+<ion-content class="packages-content">
+  <main class="packages-page">
+    <header class="page-intro">
+      <p class="eyebrow">GUARDA-VOLUMES DO COVIL</p>
+      <h1>Pacotes</h1>
+      <p class="intro-caption">
+        Deixe na loja uma carta, um playmat ou outro item para alguém retirar com um código.
+      </p>
+    </header>
+
+    <button class="primary-action" type="button" (click)="deixarPacote()">
+      <span class="primary-action-icon">
+        <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+      </span>
+      <span class="primary-action-copy">
+        <span class="primary-action-title">Deixar um pacote</span>
+        <span class="primary-action-description">
+          {{ configuracao?.valorTaxa ? (configuracao!.valorTaxa | currency: 'BRL') + ' por pacote, na sua comanda' : 'Tire uma foto e informe quem vai receber' }}
+        </span>
+      </span>
+      <ion-icon class="primary-action-arrow" name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+    </button>
+
+    <section class="packages-list" *ngIf="carregando" aria-busy="true" aria-label="Carregando pacotes">
+      <ion-card class="package-card" *ngFor="let item of [1, 2]">
+        <ion-skeleton-text animated class="skeleton-photo"></ion-skeleton-text>
+        <div class="package-copy">
+          <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line skeleton-short"></ion-skeleton-text>
+        </div>
+      </ion-card>
+    </section>
+
+    <ng-container *ngIf="!carregando">
+      <section class="empty-state" *ngIf="!pacotes.length">
+        <div class="empty-icon">
+          <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Você ainda não deixou pacotes com esta comanda.</h2>
+      </section>
+
+      <section *ngIf="aguardando.length" aria-labelledby="aguardando-title">
+        <h2 class="section-title" id="aguardando-title">Aguardando retirada</h2>
+        <div class="packages-list">
+          <article class="package-card" *ngFor="let pacote of aguardando">
+            <img class="package-photo" *ngIf="urlFoto(pacote.fotoDeposito) as url" [src]="url" [alt]="pacote.descricao" />
+            <div class="package-copy">
+              <span class="package-category">{{ rotuloCategoria(pacote.categoria) }}</span>
+              <strong class="package-title">{{ pacote.descricao }}</strong>
+              <span class="package-info">Para <strong>{{ pacote.destinatario }}</strong></span>
+              <button class="package-code" type="button" (click)="mostrarCodigo(pacote)"
+                      [attr.aria-label]="'Código do pacote: ' + pacote.codigo">
+                <ion-icon name="key-outline" aria-hidden="true"></ion-icon>
+                {{ pacote.codigo }}
+              </button>
+              <button class="package-cancel" type="button" [disabled]="cancelando === pacote.id" (click)="cancelar(pacote)">
+                Cancelar pacote
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section *ngIf="historico.length" aria-labelledby="historico-title">
+        <h2 class="section-title" id="historico-title">Histórico</h2>
+        <div class="packages-list">
+          <article class="package-card package-card-muted" *ngFor="let pacote of historico">
+            <img class="package-photo" *ngIf="urlFoto(pacote.fotoDeposito) as url" [src]="url" [alt]="pacote.descricao" />
+            <div class="package-copy">
+              <span class="package-category">{{ rotuloCategoria(pacote.categoria) }}</span>
+              <strong class="package-title">{{ pacote.descricao }}</strong>
+              <span class="package-info">Para {{ pacote.destinatario }} · {{ pacote.codigo }}</span>
+              <span class="package-status" [class.package-status-cancelled]="pacote.status === 'CANCELADO'">
+                {{ rotuloStatus[pacote.status] }}
+                <ng-container *ngIf="pacote.dataHoraRetirada"> em {{ pacote.dataHoraRetirada | date: 'dd/MM HH:mm' }}</ng-container>
+              </span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </ng-container>
+  </main>
+</ion-content>

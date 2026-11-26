@@ -25,7 +25,7 @@
       <article class="order-list">
         <div class="order-item" *ngFor="let pedido of pedidos">
           <div class="product-icon">
-            <ion-icon [name]="isInscricaoEvento(pedido) ? 'trophy-outline' : 'fast-food-outline'" aria-hidden="true"></ion-icon>
+            <ion-icon [name]="isTaxaPacote(pedido) ? 'cube-outline' : isItemAvulso(pedido) ? 'trophy-outline' : 'fast-food-outline'" aria-hidden="true"></ion-icon>
           </div>
           <div class="product-details">
             <h3>{{ nomeDoPedido(pedido) }}</h3>

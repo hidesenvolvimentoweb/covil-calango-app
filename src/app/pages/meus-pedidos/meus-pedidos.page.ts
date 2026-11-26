@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
-import { isInscricaoEvento, PedidoDTO, precoUnitario, valorDoPedido } from 'src/app/model/pedido.dto';
+import { isItemAvulso, PedidoDTO, precoUnitario, valorDoPedido } from 'src/app/model/pedido.dto';
 import { GenericClass } from 'src/app/model/generic.class';
 import { fromStatusPedidoEnumValue, StatusPedidoEnum } from 'src/app/enums/status-pedido.enum';
 import { PedidoService, topicoPedidosDaComanda } from 'src/app/services/pedido.service';
@@ -62,7 +62,7 @@ export class MeusPedidosPage extends GenericClass implements ViewWillEnter, View
     this.pedidosService.getAllByParams(this.buildParams()).subscribe({
       next: res => {
         // A inscrição em evento aparece na comanda, mas não é um pedido da cozinha.
-        this.listaMeusPedidos = res.filter(pedido => !isInscricaoEvento(pedido));
+        this.listaMeusPedidos = res.filter(pedido => !isItemAvulso(pedido));
         this.pedidosExpandidos.clear();
         this.ordenarPedidosPorPrioridade();
         this.carregando = false;

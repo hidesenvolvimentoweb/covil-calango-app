@@ -10,6 +10,7 @@ import { MinhaComandaPage } from './pages/minha-comanda/minha-comanda.page';
 import { HasLoginGuard } from './guards/has-login.guard';
 import { EventosPage } from './pages/eventos/eventos.page';
 import { CalendarioEventosPage } from './pages/eventos/calendario-eventos/calendario-eventos.page';
+import { PacotesPage } from './pages/pacotes/pacotes.page';
 
 const routes: Routes = [
   {
@@ -50,6 +51,11 @@ const routes: Routes = [
   {
     path: 'eventos/calendario',
     component: CalendarioEventosPage,
+    canActivate: [LoginGuard]
+  },
+  {
+    path: 'pacotes',
+    component: PacotesPage,
     canActivate: [LoginGuard]
   },
   {
