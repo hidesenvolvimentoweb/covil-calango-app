@@ -88,3 +88,46 @@
   color: var(--payment-muted);
   font-size: 0.8rem;
 }
+
+.save-card {
+  margin-top: 0.5rem;
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  font-size: 0.9rem;
+
+  ion-checkbox {
+    margin-inline-end: 0.75rem;
+  }
+
+  p {
+    margin-top: 0.2rem;
+    color: var(--payment-muted);
+    font-size: 0.78rem;
+  }
+}
+
+.saved-cards {
+  margin-top: 0.75rem;
+}
+
+.saved-cards-title {
+  margin: 0 0 0.25rem;
+  color: var(--payment-muted);
+  font-size: 0.78rem;
+}
+
+.saved-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+
+  span {
+    flex: 1;
+  }
+
+  ion-button {
+    margin: 0;
+  }
+}

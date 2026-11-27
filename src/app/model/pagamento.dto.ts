@@ -23,6 +23,8 @@ export class PagamentoDTO {
   public cartaoTipo?: 'CREDITO' | 'DEBITO';
   /** Motivo da recusa do cartão, em texto para o cliente. */
   public mensagemRecusa?: string;
+  /** Resultado do pedido para salvar o cartão neste celular; ausente quando não foi pedido. */
+  public cartaoSalvo?: boolean;
   public dataHoraCriacao?: string;
   public dataHoraExpiracao?: string;
   public dataHoraPagamento?: string;
@@ -44,7 +46,30 @@ export interface PagamentoCartaoRequestDTO {
   token: string;
   bandeira: string;
   emissorId?: string;
-  email: string;
-  tipoDocumento: string;
-  documento: string;
+  /** E-mail e documento do titular: o formulário não pede de novo quando o cartão é um cartão salvo. */
+  email?: string;
+  tipoDocumento?: string;
+  documento?: string;
+  /** Salvar o cartão neste celular para as próximas compras. */
+  salvarCartao?: boolean;
+}
+
+/** Cartão salvo neste celular (o número completo e o código de segurança ficam no Mercado Pago). */
+export interface CartaoSalvoDTO {
+  id: string;
+  /** payment_method_id (ex.: visa, master). */
+  bandeira?: string;
+  nomeBandeira?: string;
+  /** credit_card ou debit_card. */
+  tipo?: string;
+  finalCartao?: string;
+  mesValidade?: number;
+  anoValidade?: number;
+}
+
+/** Cartões salvos neste celular (GET /api/pagamento/cartoes). */
+export interface CartoesSalvosDTO {
+  /** Cliente no Mercado Pago, exigido pelo formulário para mostrar os cartões; ausente sem cartões salvos. */
+  clienteId?: string;
+  cartoes: CartaoSalvoDTO[];
 }

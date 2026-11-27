@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
-import { PagamentoConfiguracaoDTO, PagamentoDTO } from 'src/app/model/pagamento.dto';
+import { CartaoSalvoDTO, CartoesSalvosDTO, PagamentoConfiguracaoDTO, PagamentoDTO } from 'src/app/model/pagamento.dto';
 import { MetodoPagamentoEnum, StatusPagamentoEnum } from 'src/app/enums/status-pagamento.enum';
 import { PagamentoService, topicoPagamentosDaComanda } from 'src/app/services/pagamento.service';
 import { SessaoService } from 'src/app/services/sessao.service';
@@ -49,6 +49,11 @@ export class ModalPagamentoCartaoPage implements OnInit, OnDestroy {
   public formularioIndisponivel = false;
   public abrindoMercadoPago = false;
   public cancelando = false;
+  /** Cartões salvos neste celular (o formulário os oferece); a lista abaixo dele permite removê-los. */
+  public cartoesSalvos: CartaoSalvoDTO[] = [];
+  /** "Salvar este cartão neste celular", marcado pelo cliente (desmarcado por padrão). */
+  public salvarCartao = false;
+  public removendoCartao?: string;
 
   private numeroComanda: string | number;
   private formulario?: any;
@@ -182,9 +187,19 @@ export class ModalPagamentoCartaoPage implements OnInit, OnDestroy {
       if (this.etapa !== 'formulario') {
         return;
       }
+      const salvos = await this.carregarCartoesSalvos();
+      if (this.etapa !== 'formulario') {
+        return;
+      }
       const mercadoPago = new MercadoPago(this.configuracao.publicKey, { locale: 'pt-BR' });
       this.formulario = await mercadoPago.bricks().create('cardPayment', ID_CONTAINER_FORMULARIO, {
-        initialization: { amount: Number(this.valorTotal) || 0 },
+        initialization: {
+          amount: Number(this.valorTotal) || 0,
+          // Com cartões salvos neste celular, o formulário os oferece e pede só o código de segurança.
+          ...(salvos.clienteId && salvos.cartoes.length
+            ? { payer: { customerId: salvos.clienteId, cardsIds: salvos.cartoes.map(cartao => cartao.id) } }
+            : {})
+        },
         customization: {
           // Crédito ou débito, à vista (sem pré-pago).
           paymentMethods: {
@@ -216,6 +231,57 @@ export class ModalPagamentoCartaoPage implements OnInit, OnDestroy {
     }
   }
 
+  /** Marca ou desmarca "salvar este cartão neste celular". */
+  alterarSalvarCartao(evento: any): void {
+    this.salvarCartao = !!evento?.detail?.checked;
+  }
+
+  descricaoCartaoSalvo(cartao: CartaoSalvoDTO): string {
+    const tipo = cartao.tipo === 'debit_card' ? 'débito' : cartao.tipo === 'credit_card' ? 'crédito' : '';
+    const nome = cartao.nomeBandeira || cartao.bandeira || 'Cartão';
+    return `${nome}${tipo ? ' ' + tipo : ''} •••• ${cartao.finalCartao ?? ''}`.trim();
+  }
+
+  async removerCartaoSalvo(cartao: CartaoSalvoDTO): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Remover cartão?',
+      message: `O cartão ${this.descricaoCartaoSalvo(cartao)} deixará de aparecer neste celular.`,
+      buttons: [
+        { text: 'Voltar', role: 'cancel' },
+        { text: 'Remover', role: 'destructive', handler: () => this.confirmarRemocao(cartao) }
+      ]
+    });
+    await alert.present();
+  }
+
+  private confirmarRemocao(cartao: CartaoSalvoDTO): void {
+    this.removendoCartao = cartao.id;
+    this.pagamentoService.excluirCartaoSalvo(cartao.id).subscribe({
+      next: () => {
+        this.removendoCartao = undefined;
+        // Remonta o formulário sem o cartão removido.
+        this.mostrarFormulario();
+      },
+      error: () => (this.removendoCartao = undefined)
+    });
+  }
+
+  /** Cartões salvos neste celular; sem eles (ou com erro) o formulário abre só para digitar o cartão. */
+  private carregarCartoesSalvos(): Promise<CartoesSalvosDTO> {
+    return new Promise(resolve => {
+      this.pagamentoService.listarCartoesSalvos().subscribe({
+        next: salvos => {
+          this.cartoesSalvos = salvos?.cartoes ?? [];
+          resolve({ clienteId: salvos?.clienteId, cartoes: this.cartoesSalvos });
+        },
+        error: () => {
+          this.cartoesSalvos = [];
+          resolve({ cartoes: [] });
+        }
+      });
+    });
+  }
+
   /** onSubmit do formulário: a promessa mantém o botão "Pagar" carregando até a resposta da API. */
   private cobrar(dados: any): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -225,7 +291,8 @@ export class ModalPagamentoCartaoPage implements OnInit, OnDestroy {
         emissorId: dados?.issuer_id != null ? String(dados.issuer_id) : undefined,
         email: dados?.payer?.email,
         tipoDocumento: dados?.payer?.identification?.type,
-        documento: dados?.payer?.identification?.number
+        documento: dados?.payer?.identification?.number,
+        salvarCartao: this.salvarCartao || undefined
       }).subscribe({
         next: pagamento => {
           resolve();

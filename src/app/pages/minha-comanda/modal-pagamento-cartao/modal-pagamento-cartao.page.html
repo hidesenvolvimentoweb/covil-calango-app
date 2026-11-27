@@ -34,6 +34,29 @@
         <ion-skeleton-text *ngIf="carregandoFormulario" animated class="card-skeleton"></ion-skeleton-text>
         <div [id]="idContainerFormulario" class="card-form"></div>
 
+        <ng-container *ngIf="!carregandoFormulario && !formularioIndisponivel">
+          <ion-item lines="none" class="save-card">
+            <ion-checkbox slot="start" [checked]="salvarCartao" (ionChange)="alterarSalvarCartao($event)"
+              aria-describedby="save-card-help"></ion-checkbox>
+            <ion-label class="ion-text-wrap">
+              Salvar este cartão neste celular
+              <p id="save-card-help">Na próxima compra, é só escolher o cartão e digitar o código de segurança.</p>
+            </ion-label>
+          </ion-item>
+
+          <section class="saved-cards" *ngIf="cartoesSalvos.length" aria-label="Cartões salvos neste celular">
+            <p class="saved-cards-title">Cartões salvos neste celular</p>
+            <div class="saved-card" *ngFor="let cartao of cartoesSalvos">
+              <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
+              <span>{{ descricaoCartaoSalvo(cartao) }}</span>
+              <ion-button fill="clear" size="small" color="danger" [disabled]="removendoCartao === cartao.id"
+                (click)="removerCartaoSalvo(cartao)" [attr.aria-label]="'Remover ' + descricaoCartaoSalvo(cartao)">
+                Remover
+              </ion-button>
+            </div>
+          </section>
+        </ng-container>
+
         <section class="payment-card payment-result" *ngIf="formularioIndisponivel">
           <p>Não foi possível carregar o formulário do cartão. Confira sua internet e tente de novo.</p>
           <ion-button fill="outline" color="primary" (click)="mostrarFormulario()">Tentar novamente</ion-button>
@@ -42,7 +65,8 @@
 
       <p class="payment-note">
         <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
-        Os dados do cartão vão direto para o Mercado Pago. O Covil não vê nem guarda o número do seu cartão.
+        Os dados do cartão vão direto para o Mercado Pago. O Covil não vê nem guarda o número do seu cartão, nem
+        quando você o salva neste celular.
       </p>
 
       <div class="actions">
@@ -130,6 +154,12 @@
           Recebemos <strong>{{ pagamento?.valor | currency: 'BRL' }}</strong>
           <ng-container *ngIf="final"> no cartão {{ final }}</ng-container>
           e sua comanda foi encerrada. Obrigado pela visita, volte sempre ao Covil!
+        </p>
+        <p class="card-caption" *ngIf="pagamento?.cartaoSalvo === true">
+          Cartão salvo neste celular para as próximas compras.
+        </p>
+        <p class="card-caption" *ngIf="pagamento?.cartaoSalvo === false">
+          Não foi possível salvar o cartão desta vez. Você pode salvá-lo na próxima compra.
         </p>
       </section>
       <div class="actions">
