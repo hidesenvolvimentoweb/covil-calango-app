@@ -75,7 +75,8 @@ export class ModalConfirmarPedidoPage implements ViewWillEnter {
         buttons: ['OK']
       })).present().then(() => this.modalController.dismiss()),
       // 409: a comanda foi finalizada, há um PIX pendente (pedidos bloqueados até pagar ou cancelar) ou o produto
-      // não tem mais unidades suficientes (outro cliente comprou antes; o cardápio é recarregado ao fechar o modal).
+      // não tem mais unidades suficientes (outro cliente comprou antes) ou a cozinha fechou (o cardápio é recarregado
+      // ao fechar o modal).
       // O aviso da API é exibido pelo interceptor de erros; a sessão só expira se a comanda estiver fechada.
       error: (error: HttpErrorResponse) => {
         if (error.status === HTTP_STATUS_CONFLICT) {

@@ -26,6 +26,7 @@ import { HTTP_ERROR_INTERCEPTOR_PROVIDER } from './interceptors/http-error.inter
 import { HTTP_AUTH_INTERCEPTOR_PROVIDER } from './interceptors/http-auth.interceptor';
 import { ModalInformarNomePage } from './pages/login/modal-informar-nome/modal-informar-nome.page';
 import { ModalPagamentoPixPage } from './pages/minha-comanda/modal-pagamento-pix/modal-pagamento-pix.page';
+import { ModalPagamentoCartaoPage } from './pages/minha-comanda/modal-pagamento-cartao/modal-pagamento-cartao.page';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CardEventoComponent } from './components/card-evento/card-evento.component';
 import { EventosPage } from './pages/eventos/eventos.page';
@@ -64,6 +65,7 @@ registerLocaleData(localePt);
     ModalConfirmarPedidoPage,
     ModalInformarNomePage,
     ModalPagamentoPixPage,
+    ModalPagamentoCartaoPage,
     ModalDetalharEventoPage,
     ModalDeixarPacotePage
   ],

@@ -8,6 +8,8 @@ export class ProdutoDTO {
   public valor?: number;
   public ingredientes?: string;
   public prazo?: number;
+  /** Preparado na cozinha: indisponível enquanto ela estiver fechada. */
+  public usaCozinha?: boolean;
   /**
    * Quantas unidades podem ser pedidas de uma vez (limite por pedido, reduzido pelo estoque). Zero: esgotado.
    * O estoque em si não é enviado pela API.

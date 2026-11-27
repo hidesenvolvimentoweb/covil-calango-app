@@ -244,3 +244,50 @@
     padding-left: 1.75rem;
   }
 }
+
+/* Situação da cozinha (aberta/fechada), atualizada em tempo real pela equipe. */
+.kitchen-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  background: var(--menu-cream);
+  color: var(--menu-green-dark);
+
+  ion-icon {
+    flex: 0 0 auto;
+    margin-top: 0.1rem;
+    font-size: 1.4rem;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  strong {
+    font-size: 0.95rem;
+  }
+
+  span {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  &.closed {
+    background: #fff4e5;
+    color: #8a5a12;
+  }
+}
+
+/* Produto da cozinha com ela fechada: continua visível, mas apagado. */
+.product-card.unavailable {
+  img,
+  .product-image-placeholder {
+    filter: grayscale(1);
+    opacity: 0.6;
+  }
+}

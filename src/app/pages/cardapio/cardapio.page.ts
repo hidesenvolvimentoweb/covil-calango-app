@@ -6,7 +6,9 @@ import {
   quantidadeMaximaDoProduto
 } from './modal-confirmar-pedido/modal-confirmar-pedido.page';
 import { ProdutoService } from 'src/app/services/produto.service';
-import { ViewWillEnter } from '@ionic/angular';
+import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { CozinhaDTO, CozinhaService, TOPICO_COZINHA } from 'src/app/services/cozinha.service';
+import { WebsocketService } from 'src/app/services/websocket.service';
 import { resolverUrlImagem } from 'src/app/utils/imagem.util';
 import { semLoading } from 'src/app/interceptors/http-loading.interceptor';
 import {
@@ -41,7 +43,11 @@ const CATEGORIAS_CARDAPIO: CategoriaCardapio[] = [
   templateUrl: './cardapio.page.html',
   styleUrls: ['./cardapio.page.scss'],
 })
-export class CardapioPage extends GenericClass implements ViewWillEnter {
+export class CardapioPage extends GenericClass implements ViewWillEnter, ViewWillLeave {
+
+  /** Nulo enquanto a situação não chega (nada é bloqueado; a API recusa o pedido se a cozinha estiver fechada). */
+  public cozinhaAberta: boolean | null = null;
+  private cancelarEscutaCozinha?: () => void;
 
   public listaDeProdutos: ProdutoDTO[] = [];
   public listaDeProdutosFiltrada: ProdutoDTO[] = [];
@@ -54,7 +60,9 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
 
   constructor(
     public injector: Injector,
-    private produtoService: ProdutoService
+    private produtoService: ProdutoService,
+    private cozinhaService: CozinhaService,
+    private websocketService: WebsocketService
   ) {
     super(injector);
   }
@@ -62,6 +70,37 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
   ionViewWillEnter(): void {
     this.carregando = true;
     this.carregarProdutos();
+    this.carregarCozinha();
+    this.escutarCozinha();
+  }
+
+  ionViewWillLeave(): void {
+    this.cancelarEscutaCozinha?.();
+    this.cancelarEscutaCozinha = undefined;
+  }
+
+  carregarCozinha(): void {
+    this.cozinhaService.getSituacao().subscribe({
+      next: cozinha => (this.cozinhaAberta = cozinha.aberta),
+      error: () => {}
+    });
+  }
+
+  /** A equipe abre ou fecha a cozinha e o cardápio atualiza na hora. */
+  private escutarCozinha(): void {
+    if (this.cancelarEscutaCozinha) {
+      return;
+    }
+    this.websocketService.createWebSocketConnection().subscribe({ error: () => {} });
+    this.cancelarEscutaCozinha = this.websocketService.subscribeToTopic(TOPICO_COZINHA, body => {
+      const cozinha: CozinhaDTO = WebsocketService.formatResponse(body);
+      this.cozinhaAberta = cozinha.aberta;
+    });
+  }
+
+  /** Produto da cozinha com ela fechada: aparece no cardápio, mas não pode ser pedido. */
+  isCozinhaFechada(produto: ProdutoDTO): boolean {
+    return !!produto.usaCozinha && this.cozinhaAberta === false;
   }
 
   /** Recarrega o cardápio; usado também ao fechar o pedido, já que o estoque pode ter mudado. */
@@ -86,7 +125,11 @@ export class CardapioPage extends GenericClass implements ViewWillEnter {
       initialBreakpoint: 0.8,
       componentProps: { produto }
     });
-    void modal.onDidDismiss().then(() => this.carregarProdutos());
+    // O estoque pode ter mudado, e a cozinha pode ter fechado enquanto o cliente escolhia.
+    void modal.onDidDismiss().then(() => {
+      this.carregarProdutos();
+      this.carregarCozinha();
+    });
     await modal.present();
   }
 

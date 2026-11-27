@@ -64,6 +64,17 @@
       {{ pixPendente ? 'Ver PIX pendente' : 'Pagar com PIX' }}
       <ion-icon slot="end" name="qr-code-outline" aria-hidden="true"></ion-icon>
     </ion-button>
+    <ion-button
+      *ngIf="cartaoDisponivel || cartaoPendente"
+      class="account-action"
+      expand="block"
+      fill="outline"
+      color="primary"
+      [disabled]="carregando || totalComanda <= 0"
+      (click)="pagarComCartao()">
+      {{ cartaoPendente ? 'Ver pagamento em andamento' : 'Pagar com cartão' }}
+      <ion-icon slot="end" name="card-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
     <p class="account-hint">
       O pagamento encerra sua comanda. Se preferir, pague no balcão.
     </p>

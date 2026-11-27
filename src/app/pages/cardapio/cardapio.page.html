@@ -6,6 +6,23 @@
       <p class="intro-caption">Encontre seu próximo favorito no Covil.</p>
     </header>
 
+    <section
+      *ngIf="cozinhaAberta !== null"
+      class="kitchen-status"
+      [class.closed]="!cozinhaAberta"
+      role="status"
+      aria-live="polite">
+      <ion-icon [name]="cozinhaAberta ? 'restaurant-outline' : 'moon-outline'" aria-hidden="true"></ion-icon>
+      <div>
+        <strong>{{ cozinhaAberta ? 'Cozinha aberta' : 'Cozinha fechada' }}</strong>
+        <span>
+          {{ cozinhaAberta
+            ? 'Todos os itens estão disponíveis para pedir.'
+            : 'Hambúrgueres, porções e outros itens da cozinha não podem ser pedidos agora. Bebidas e doces continuam disponíveis.' }}
+        </span>
+      </div>
+    </section>
+
     <div class="search-container">
       <ion-searchbar
         class="product-search"
@@ -50,7 +67,7 @@
     </section>
 
     <section class="product-list" *ngIf="!carregando && listaDeProdutosFiltrada.length">
-      <ion-card class="product-card" *ngFor="let produto of listaDeProdutosFiltrada">
+      <ion-card class="product-card" *ngFor="let produto of listaDeProdutosFiltrada" [class.unavailable]="isCozinhaFechada(produto)">
         <div class="product-image-container">
           <img
             *ngIf="urlImagem(produto) as url; else semImagem"
@@ -73,10 +90,16 @@
         <ion-card-content>
           <p class="ingredients-label">INGREDIENTES</p>
           <p class="ingredients">{{ produto.ingredientes }}</p>
-          <ion-button *ngIf="!isEsgotado(produto); else esgotado" expand="block" color="primary" (click)="realizarPedido(produto)">
-            Eu Quero!
-            <ion-icon slot="end" name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+          <ion-button *ngIf="isCozinhaFechada(produto); else disponivel" expand="block" color="medium" disabled>
+            Cozinha fechada
+            <ion-icon slot="end" name="moon-outline" aria-hidden="true"></ion-icon>
           </ion-button>
+          <ng-template #disponivel>
+            <ion-button *ngIf="!isEsgotado(produto); else esgotado" expand="block" color="primary" (click)="realizarPedido(produto)">
+              Eu Quero!
+              <ion-icon slot="end" name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+            </ion-button>
+          </ng-template>
           <ng-template #esgotado>
             <ion-button expand="block" color="medium" disabled>
               Esgotado

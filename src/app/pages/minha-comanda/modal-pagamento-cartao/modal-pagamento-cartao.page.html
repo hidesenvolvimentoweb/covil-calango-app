@@ -1,0 +1,194 @@
+<ion-content class="payment-content">
+  <main class="payment-page">
+    <p class="eyebrow">FECHAR COMANDA</p>
+    <h1>Pague com cartão</h1>
+
+    <!-- Carregando as formas de pagamento -->
+    <section class="payment-card" *ngIf="etapa === 'carregando'" aria-busy="true" aria-label="Carregando o pagamento">
+      <ion-skeleton-text animated class="skeleton-line skeleton-amount"></ion-skeleton-text>
+      <ion-skeleton-text animated class="card-skeleton"></ion-skeleton-text>
+    </section>
+
+    <!-- Cartão digitado ou conta do Mercado Pago -->
+    <ng-container *ngIf="etapa === 'formulario'">
+      <section class="payment-card card-total">
+        <div class="amount-row">
+          <span>Total a pagar</span>
+          <strong>{{ valorTotal | currency: 'BRL' }}</strong>
+        </div>
+        <p class="card-rule">Crédito ou débito, à vista</p>
+      </section>
+
+      <section class="wallet-option" *ngIf="configuracao?.mercadoPago">
+        <ion-button expand="block" color="primary" class="wallet-button" [disabled]="abrindoMercadoPago"
+          (click)="pagarComMercadoPago()">
+          <ion-icon slot="start" name="wallet-outline" aria-hidden="true"></ion-icon>
+          {{ abrindoMercadoPago ? 'Abrindo o Mercado Pago...' : 'Pagar com Mercado Pago' }}
+        </ion-button>
+        <p>Use um cartão salvo na sua conta do Mercado Pago, sem digitar nada.</p>
+      </section>
+
+      <ng-container *ngIf="configuracao?.cartao">
+        <p class="divider" *ngIf="configuracao?.mercadoPago"><span>ou digite o cartão</span></p>
+
+        <ion-skeleton-text *ngIf="carregandoFormulario" animated class="card-skeleton"></ion-skeleton-text>
+        <div [id]="idContainerFormulario" class="card-form"></div>
+
+        <section class="payment-card payment-result" *ngIf="formularioIndisponivel">
+          <p>Não foi possível carregar o formulário do cartão. Confira sua internet e tente de novo.</p>
+          <ion-button fill="outline" color="primary" (click)="mostrarFormulario()">Tentar novamente</ion-button>
+        </section>
+      </ng-container>
+
+      <p class="payment-note">
+        <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+        Os dados do cartão vão direto para o Mercado Pago. O Covil não vê nem guarda o número do seu cartão.
+      </p>
+
+      <div class="actions">
+        <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Verificação do banco (3DS) -->
+    <ng-container *ngIf="etapa === 'desafio'">
+      <section class="payment-card">
+        <p class="challenge-caption">
+          Seu banco pediu uma confirmação. Siga as instruções abaixo para concluir o pagamento.
+        </p>
+        <iframe class="challenge-frame" [name]="nomeIframeDesafio" title="Verificação do banco"></iframe>
+        <div class="waiting" aria-live="polite">
+          <ion-spinner name="dots" aria-hidden="true"></ion-spinner>
+          <span>Aguardando a confirmação do banco</span>
+        </div>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" fill="clear" color="danger" [disabled]="cancelando" (click)="cancelarPagamento()">
+          Cancelar pagamento
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Cartão em análise ou sem resposta do provedor -->
+    <ng-container *ngIf="etapa === 'aguardando'">
+      <section class="payment-card payment-result" aria-live="polite">
+        <div class="result-icon muted">
+          <ion-icon name="hourglass-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Confirmando seu pagamento</h2>
+        <p>Isso costuma levar poucos instantes. A confirmação aparece aqui assim que chegar.</p>
+        <div class="waiting">
+          <ion-spinner name="dots" aria-hidden="true"></ion-spinner>
+          <span>Aguardando confirmação</span>
+        </div>
+      </section>
+      <p class="payment-note">Enquanto o pagamento estiver em andamento, novos pedidos ficam bloqueados.</p>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Pagando no app/site do Mercado Pago -->
+    <ng-container *ngIf="etapa === 'mercado-pago'">
+      <section class="payment-card payment-result" aria-live="polite">
+        <div class="result-icon">
+          <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Conclua no Mercado Pago</h2>
+        <p>
+          Pague <strong>{{ pagamento?.valor | currency: 'BRL' }}</strong> no Mercado Pago e volte para cá: a
+          confirmação aparece nesta tela.
+        </p>
+        <div class="waiting">
+          <ion-spinner name="dots" aria-hidden="true"></ion-spinner>
+          <span>Aguardando pagamento</span>
+        </div>
+      </section>
+      <p class="payment-note">
+        Enquanto o pagamento estiver aberto, novos pedidos ficam bloqueados. Quer pedir mais alguma coisa? Cancele o
+        pagamento.
+      </p>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="abrirMercadoPago()">
+          Abrir o Mercado Pago
+          <ion-icon slot="end" name="open-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="danger" [disabled]="cancelando" (click)="cancelarPagamento()">
+          Cancelar pagamento
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Pago -->
+    <ng-container *ngIf="etapa === 'pago'">
+      <section class="payment-card payment-result success" aria-live="assertive">
+        <div class="result-icon">
+          <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Pagamento confirmado!</h2>
+        <p>
+          Recebemos <strong>{{ pagamento?.valor | currency: 'BRL' }}</strong>
+          <ng-container *ngIf="final"> no cartão {{ final }}</ng-container>
+          e sua comanda foi encerrada. Obrigado pela visita, volte sempre ao Covil!
+        </p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="fechar()">
+          Concluir
+          <ion-icon slot="end" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Recusado -->
+    <ng-container *ngIf="etapa === 'recusado'">
+      <section class="payment-card payment-result" aria-live="assertive">
+        <div class="result-icon muted">
+          <ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Pagamento não aprovado</h2>
+        <p>{{ pagamento?.mensagemRecusa || 'O pagamento foi recusado. Tente outro cartão ou pague com PIX.' }}</p>
+        <p class="card-caption">Nada foi cobrado. Sua comanda continua aberta.</p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="mostrarFormulario()">
+          Tentar outro cartão
+          <ion-icon slot="end" name="card-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Cancelado, expirado ou estornado -->
+    <ng-container *ngIf="etapa === 'encerrado'">
+      <section class="payment-card payment-result">
+        <div class="result-icon muted">
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>{{ tituloEncerrado }}</h2>
+        <p>Você pode tentar de novo ou, se preferir, pagar no balcão.</p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" color="primary" (click)="mostrarFormulario()">
+          Tentar de novo
+          <ion-icon slot="end" name="refresh-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+
+    <!-- Erro -->
+    <ng-container *ngIf="etapa === 'erro'">
+      <section class="payment-card payment-result">
+        <div class="result-icon muted">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>Pagamento com cartão indisponível</h2>
+        <p>Tente novamente em instantes, pague com PIX ou, se preferir, pague no balcão.</p>
+      </section>
+      <div class="actions">
+        <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Voltar à comanda</ion-button>
+      </div>
+    </ng-container>
+  </main>
+</ion-content>

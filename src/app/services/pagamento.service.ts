@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { PagamentoDTO } from '../model/pagamento.dto';
+import { PagamentoCartaoRequestDTO, PagamentoConfiguracaoDTO, PagamentoDTO } from '../model/pagamento.dto';
 import { SEM_LOADING } from '../interceptors/http-loading.interceptor';
 import { SEM_ALERTA_ERRO } from '../interceptors/http-error.interceptor';
 
@@ -35,7 +35,30 @@ export class PagamentoService {
     });
   }
 
-  /** Cancela o PIX pendente. Se ele já tinha sido pago, devolve o pagamento aprovado. */
+  /** Formas de pagamento disponíveis e a chave pública do formulário de cartão. */
+  getConfiguracao(): Observable<PagamentoConfiguracaoDTO> {
+    return this.httpClient.get<PagamentoConfiguracaoDTO>(`${this.urlController}/configuracao`, {
+      context: new HttpContext().set(SEM_LOADING, true).set(SEM_ALERTA_ERRO, true)
+    });
+  }
+
+  /**
+   * Cobra a comanda à vista no cartão (token gerado pelo formulário do Mercado Pago). A resposta traz o resultado:
+   * pago, recusado (com o motivo) ou pendente (em análise ou aguardando a verificação do banco).
+   * Sem loading global: o formulário mostra o próprio andamento.
+   */
+  pagarComCartao(numeroComanda: number | string, cartao: PagamentoCartaoRequestDTO): Observable<PagamentoDTO> {
+    return this.httpClient.post<PagamentoDTO>(`${this.urlController}/comanda/${numeroComanda}/cartao`, cartao, {
+      context: new HttpContext().set(SEM_LOADING, true)
+    });
+  }
+
+  /** Link para pagar na conta do Mercado Pago (ou o link pendente, se ainda valer). */
+  pagarComMercadoPago(numeroComanda: number | string): Observable<PagamentoDTO> {
+    return this.httpClient.post<PagamentoDTO>(`${this.urlController}/comanda/${numeroComanda}/mercado-pago`, null);
+  }
+
+  /** Cancela o pagamento pendente (PIX, cartão ou Mercado Pago). Se ele já tinha sido pago, devolve o aprovado. */
   cancelarPix(numeroComanda: number | string): Observable<PagamentoDTO> {
     return this.httpClient.delete<PagamentoDTO>(`${this.urlController}/comanda/${numeroComanda}/pix`);
   }
